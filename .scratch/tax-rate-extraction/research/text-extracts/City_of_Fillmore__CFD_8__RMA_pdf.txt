@@ -1,0 +1,977 @@
+RATE AND METHOD OF APPORTIONMENT FOR
+CITY OF FILLMORE
+COMMUNITY FACILITIES DISTRICT NO. 8
+(FILLMORE BUSINESS PARK)
+A Special Tax as hereinafter defined shall be levied on all Assessor’s Parcels in the City of Fillmore
+Community Facilities District No. 8 (Fillmore Business Park) ("CFD No. 8") and collected each
+Fiscal Year commencing in Fiscal Year 2008-09, in an amount determined by the City Council of
+the City of Fillmore or its designee, through the application of the Rate and Method of
+Apportionment as described below. All of the real property in CFD No. 8, unless exempted by law
+or by the provisions hereof, shall be taxed for the purposes, to the extent and in the manner herein
+provided.
+A.
+
+DEFINITIONS
+The terms hereinafter set forth have the following meanings:
+"Acre" or "Acreage" means the land area of an Assessor’s Parcel as shown on an
+Assessor’s Parcel Map, or if the land area is not shown on an Assessor’s Parcel Map, the
+land area shown on the applicable final map, parcel map, condominium plan, or other
+recorded County parcel map.
+"Act" means the Mello-Roos Community Facilities Act of 1982, as amended, being Chapter
+2.5, Division 2 of Title 5 of the Government Code of the State of California.
+"Administrative Expenses" means the following actual or estimated costs directly related
+to the administration of CFD No. 8: the costs of computing the Special Taxes and preparing
+the annual Special Tax collection schedules (whether by the City or designee thereof or
+both); the costs of collecting the Special Taxes (whether by the County or otherwise); the
+costs of remitting the Special Taxes to the Trustee; the costs of the Trustee (including its
+legal counsel) in the discharge of the duties required of it under the Indenture; the costs to
+the City, CFD No. 8 or any designee thereof of complying with arbitrage rebate
+requirements; the costs to the City, CFD No. 8 or any designee thereof of complying with
+City, CFD No. 8 or obligated persons disclosure requirements associated with applicable
+federal and state securities laws and of the Act; the costs associated with preparing Special
+Tax disclosure statements and responding to public inquiries regarding the Special Taxes;
+the costs of the City, CFD No. 8 or any designee thereof related to an appeal of the Special
+Tax; the costs associated with the release of funds from any escrow account; and the City’s
+annual administration fees and third party expenses. Administrative Expenses shall also
+include amounts estimated or advanced by the City or CFD No. 8 for any other
+administrative purposes of CFD No. 8, including attorney’s fees and other costs related to
+commencing and pursuing to completion any foreclosure of delinquent Special Taxes.
+"Assessor’s Parcel" means a lot or parcel shown in an Assessor’s Parcel Map with an
+assigned Assessor’s parcel number.
+
+City of Fillmore
+CFD No. 8 (Fillmore Business Park)
+
+June 2, 2008
+Page 1
+
+"Assessor’s Parcel Map" means an official map of the County Assessor of the County
+designating parcels by Assessor’s parcel number.
+"Bonds" means any bonds or other debt (as defined in Section 53317(d) of the Act),
+whether in one or more series, issued by CFD No. 8 under the Act.
+"CFD Administrator" means an official of the City, or designee thereof, responsible for
+determining the Zone 1 Special Tax Requirement, Zone 2 Special Tax Requirement, Zone 3
+Special Tax Requirement, Zone 4 Special Tax Requirement, Zone 5 Special Tax
+Requirement, and providing for the levy and collection of the Special Taxes.
+"CFD No. 8" means the City of Fillmore Community Facilities District No. 8 (Fillmore
+Business Park).
+"City" means the City of Fillmore, California.
+"Council" means the City Council of the City.
+"County" means the County of Ventura, California.
+"Final Map" means (i) a final map, or portion thereof, approved by the City pursuant to the
+Subdivision Map Act (California Government Code Section 66410 et seq.) that creates
+individual lots for which building permits may be issued without any further subdivision or
+(ii) for condominiums, a final map, or portion thereof, approved by the City and a
+condominium plan recorded pursuant to California Civil Code Section 1352 that creates
+individual lots for which building permits may be issued. The term “Final Map” shall not
+include any Assessor’s Parcel Map or subdivision map, or portion thereof, that does not
+create individual lots for which a building permit may be issued, including Assessor’s
+Parcels that are designated as remainder parcels.
+"Fiscal Year" means the period starting July 1 and ending on the following June 30.
+"Indenture" means the indenture, fiscal agent agreement, resolution or other instrument
+pursuant to which Bonds are issued, as modified, amended and/or supplemented from time to
+time.
+"Maximum Special Tax" means the Maximum Special Tax, determined in accordance with
+Section C below, that can be levied in any Fiscal Year on any Assessor’s Parcel.
+"Non-Prepayment Principal Amount" means the original principal amount of the Bonds
+minus the principal amount of the Bonds that have been paid at maturity or have been
+redeemed or defeased other than from reimbursements for oversized facilities or fees or
+prepayments of the Special Tax obligations for Assessor’s Parcels located in any Zone.
+"Outstanding Bonds" means the sum of the Outstanding Zone 1 Bonds, Outstanding Zone
+2 Bonds, Outstanding Zone 3 Bonds, Outstanding Zone 4 Bonds, and Outstanding Zone 5
+Bonds.
+City of Fillmore
+CFD No. 8 (Fillmore Business Park)
+
+June 2, 2008
+Page 2
+
+"Outstanding Zone 1 Bonds" means the amount obtained (a) by multiplying the NonPrepayment Principal Amount by the Zone 1 Allocation, and (b) by subtracting from the
+product thus obtained the principal amount of the Bonds, if any, that have been redeemed or
+defeased as a result of reimbursements for oversized facilities or fees credited to Zone 1 or
+the prepayment of the Special Tax obligations for Assessor’s Parcels located in Zone 1.
+"Outstanding Zone 2 Bonds" means the amount obtained (a) by multiplying the NonPrepayment Principal Amount by the Zone 2 Allocation, and (b) by subtracting from the
+product thus obtained the principal amount of the Bonds, if any, that have been redeemed or
+defeased as a result of reimbursements for oversized facilities or fees credited to Zone 2 or
+the prepayment of the Special Tax obligations for Assessor’s Parcels located in Zone 2.
+"Outstanding Zone 3 Bonds" means the amount obtained (a) by multiplying the NonPrepayment Principal Amount by the Zone 3 Allocation, and (b) by subtracting from the
+product thus obtained the principal amount of the Bonds, if any, that have been redeemed or
+defeased as a result of reimbursements for oversized facilities or fees credited to Zone 3 or
+the prepayment of the Special Tax obligations for Assessor’s Parcels located in Zone 3.
+"Outstanding Zone 4 Bonds" means the amount obtained (a) by multiplying the NonPrepayment Principal Amount by the Zone 4 Allocation, and (b) by subtracting from the
+product thus obtained the principal amount of the Bonds, if any, that have been redeemed or
+defeased as a result of reimbursements for oversized facilities or fees credited to Zone 4 or
+the prepayment of the Special Tax obligations for Assessor’s Parcels located in Zone 4.
+"Outstanding Zone 5 Bonds" means the amount obtained (a) by multiplying the NonPrepayment Principal Amount by the Zone 5 Allocation, and (b) by subtracting from the
+product thus obtained the principal amount of the Bonds, if any, that have been redeemed or
+defeased as a result of reimbursements for oversized facilities or fees credited to Zone 5 or
+the prepayment of the Special Tax obligations for Assessor’s Parcels located in Zone 5.
+"Property Owner Association Property" means, for each Fiscal Year, any property within
+the boundaries of CFD No. 8 that was owned by a property owner association, including any
+master or sub-association, as of January 1 of the prior Fiscal Year.
+"Proportionately" means, for Zone Property within a particular Zone, that the ratio of the
+actual Special Tax levy per Acre to the Maximum Special Tax per Acre is equal for all
+Assessor’s Parcels of Zone Property in such Zone. The term "Proportionately" may similarly
+be applied to other categories of Taxable Property as listed in Section D below.
+"Public Property" means property within the boundaries of CFD No. 8 owned by,
+irrevocably offered or dedicated to, or for which an easement for purposes of public right-ofway has been granted to the federal government, the State, the County, the City, or any local
+government or other public agency, provided that any property leased by a public agency to
+a private entity and subject to taxation under Section 53340.1 of the Act shall be taxed and
+classified according to its use.
+
+City of Fillmore
+CFD No. 8 (Fillmore Business Park)
+
+June 2, 2008
+Page 3
+
+"Special Tax" means the special tax to be levied in each Fiscal Year on each Assessor’s
+Parcel of Taxable Property within CFD No. 8 to fund the Zone 1 Special Tax Requirement,
+Zone 2 Special Tax Requirement, Zone 3 Special Tax Requirement, Zone 4 Special Tax
+Requirement, or Zone 5 Special Tax Requirement, as applicable.
+"State" means the State of California.
+"Taxable Property" means all of the Assessor’s Parcels within the boundaries of CFD No.
+8 which are not exempt from the Special Tax pursuant to law or Section E below.
+"Taxable Property Owner Association Property" means all Assessor’s Parcels of
+Property Owner Association Property that are not exempt pursuant to Section E below.
+"Taxable Public Property" means all Assessor’s Parcels of Public Property that are not
+exempt pursuant to Section E below.
+"Trustee" means the trustee or fiscal agent under the Indenture.
+"Zone" means the geographic areas identified as Zone 1, Zone 2, Zone 3, Zone 4, or Zone 5,
+as applicable, as identified on the boundary map for CFD No. 8 that is attached in Exhibit A
+to this Rate and Method of Apportionment.
+"Zone Property" means for each Fiscal Year, all Taxable Property, exclusive of Taxable
+Public Property and Taxable Property Owner Association Property, within a particular Zone.
+"Zone 1 Allocation" means the percentage of the annual debt service on the Bonds that will
+be allocated to Zone 1, as determined by the CFD Administrator at the time of the issuance
+of the Bonds, based on Zone 1’s share of the public facilities and fees funded through the
+issuance of the Bonds.
+"Zone 2 Allocation" means the percentage of the annual debt service on the Bonds that will
+be allocated to Zone 2, as determined by the CFD Administrator at the time of the issuance
+of the Bonds, based on Zone 2’s share of the public facilities and fees funded through the
+issuance of the Bonds.
+"Zone 3 Allocation" means the percentage of the annual debt service on the Bonds that will
+be allocated to Zone 3, as determined by the CFD Administrator at the time of the issuance
+of the Bonds, based on Zone 3’s share of the public facilities and fees funded through the
+issuance of the Bonds.
+"Zone 4 Allocation" means the percentage of the annual debt service on the Bonds that will
+be allocated to Zone 4, as determined by the CFD Administrator at the time of the issuance
+of the Bonds, based on Zone 4’s share of the public facilities and fees funded through the
+issuance of the Bonds.
+"Zone 5 Allocation" means the percentage of the annual debt service on the Bonds that will
+be allocated to Zone 5, as determined by the CFD Administrator at the time of the issuance
+City of Fillmore
+CFD No. 8 (Fillmore Business Park)
+
+June 2, 2008
+Page 4
+
+of the Bonds, based on Zone 5’s share of the public facilities and fees funded through the
+issuance of the Bonds.
+"Zone 1 Delinquency Amount" means, for any Fiscal Year, the amount required to (i)
+replenish the amount, if any, withdrawn from any reserve funds to pay debt service on the
+Bonds as a result of delinquencies in the collection of Special Taxes levied in Zone 1 in the
+preceding Fiscal Year, as determined by the CFD Administrator; and (ii) provide funds to
+offset reasonably anticipated delinquencies in the collection of Special Taxes to be levied in
+Zone 1 based on the delinquency rate for Special Taxes levied in Zone 1 in the preceding
+Fiscal Year.
+"Zone 2 Delinquency Amount" means, for any Fiscal Year, the amount required to (i)
+replenish the amount, if any, withdrawn from any reserve funds to pay debt service on the
+Bonds as a result of delinquencies in the collection of Special Taxes levied in Zone 2 in the
+preceding Fiscal Year, as determined by the CFD Administrator; and (ii) provide funds to
+offset reasonably anticipated delinquencies in the collection of Special Taxes to be levied in
+Zone 2 based on the delinquency rate for Special Taxes levied in Zone 2 in the preceding
+Fiscal Year.
+"Zone 3 Delinquency Amount" means, for any Fiscal Year, the amount required to (i)
+replenish the amount, if any, withdrawn from any reserve funds to pay debt service on the
+Bonds as a result of delinquencies in the collection of Special Taxes levied in Zone 3 in the
+preceding Fiscal Year, as determined by the CFD Administrator; and (ii) provide funds to
+offset reasonably anticipated delinquencies in the collection of Special Taxes to be levied in
+Zone 3 based on the delinquency rate for Special Taxes levied in Zone 3 in the preceding
+Fiscal Year.
+"Zone 4 Delinquency Amount" means, for any Fiscal Year, the amount required to (i)
+replenish the amount, if any, withdrawn from any reserve funds to pay debt service on the
+Bonds as a result of delinquencies in the collection of Special Taxes levied in Zone 4 in the
+preceding Fiscal Year, as determined by the CFD Administrator; and (ii) provide funds to
+offset reasonably anticipated delinquencies in the collection of Special Taxes to be levied in
+Zone 4 based on the delinquency rate for Special Taxes levied in Zone 4 in the preceding
+Fiscal Year.
+"Zone 5 Delinquency Amount" means, for any Fiscal Year, the amount required to (i)
+replenish the amount, if any, withdrawn from any reserve funds to pay debt service on the
+Bonds as a result of delinquencies in the collection of Special Taxes levied in Zone 5 in the
+preceding Fiscal Year, as determined by the CFD Administrator; and (ii) provide funds to
+offset reasonably anticipated delinquencies in the collection of Special Taxes to be levied in
+Zone 5 based on the delinquency rate for Special Taxes levied in Zone 5 in the preceding
+Fiscal Year.
+"Zone 1 Outstanding Bonds Ratio" means, as of July 1 of any Fiscal Year, the ratio
+obtained by dividing the Outstanding Zone 1 Bonds by the Outstanding Bonds.
+
+City of Fillmore
+CFD No. 8 (Fillmore Business Park)
+
+June 2, 2008
+Page 5
+
+"Zone 2 Outstanding Bonds Ratio" means, as of July 1 of any Fiscal Year, the ratio
+obtained by dividing the Outstanding Zone 2 Bonds by the Outstanding Bonds.
+"Zone 3 Outstanding Bonds Ratio" means, as of July 1 of any Fiscal Year, the ratio
+obtained by dividing the Outstanding Zone 3 Bonds by the Outstanding Bonds.
+"Zone 4 Outstanding Bonds Ratio" means, as of July 1 of any Fiscal Year, the ratio
+obtained by dividing the Outstanding Zone 4 Bonds by the Outstanding Bonds.
+"Zone 5 Outstanding Bonds Ratio" means, as of July 1 of any Fiscal Year, the ratio
+obtained by dividing the Outstanding Zone 5 Bonds by the Outstanding Bonds.
+"Zone 1 Special Tax Requirement" means the amount required in any Fiscal Year for CFD
+No. 8 to: (i) pay debt service on all Outstanding Zone 1 Bonds due in the calendar year that
+commences in such Fiscal Year; (ii) pay an amount equal to the Zone 1 Outstanding Bonds
+Ratio multiplied by the periodic costs, including but not limited to, credit enhancement and
+rebate payments, related to the Outstanding Bonds as determined by the CFD Administrator;
+(iii) pay an amount equal to the Zone 1 Outstanding Bonds Ratio multiplied by the total
+Administrative Expenses for CFD No. 8, as determined by the CFD Administrator; (iv) pay
+any amounts required to establish a reserve fund for Zone 1, as determined by the CFD
+Admistrator; (v) pay directly for acquisition or construction of Zone 1’s share of the
+authorized facilities, as determined by the CFD Administrator; (vi) pay the Zone 1
+Delinquency Amount; less (vii) a credit for funds available to reduce the annual Special Tax
+levy for Zone 1, as determined by the CFD Administrator pursuant to the Indenture.
+"Zone 2 Special Tax Requirement" means the amount required in any Fiscal Year for CFD
+No. 8 to: (i) pay debt service on all Outstanding Zone 2 Bonds due in the calendar year that
+commences in such Fiscal Year; (ii) pay an amount equal to the Zone 2 Outstanding Bonds
+Ratio multiplied by the periodic costs, including but not limited to, credit enhancement and
+rebate payments, related to the Outstanding Bonds as determined by the CFD Administrator;
+(iii) pay an amount equal to the Zone 2 Outstanding Bonds Ratio multiplied by the total
+Administrative Expenses for CFD No. 8, as determined by the CFD Administrator; (iv) pay
+any amounts required to establish a reserve fund for Zone 2, as determined by the CFD
+Admistrator; (v) pay directly for acquisition or construction of Zone 2’s share of the
+authorized facilities, as determined by the CFD Administrator; (vi) pay the Zone 2
+Delinquency Amount; less (vii) a credit for funds available to reduce the annual Special Tax
+levy for Zone 2, as determined by the CFD Administrator pursuant to the Indenture.
+"Zone 3 Special Tax Requirement" means the amount required in any Fiscal Year for CFD
+No. 8 to: (i) pay debt service on all Outstanding Zone 3 Bonds due in the calendar year that
+commences in such Fiscal Year; (ii) pay an amount equal to the Zone 3 Outstanding Bonds
+Ratio multiplied by the periodic costs, including but not limited to, credit enhancement and
+rebate payments, related to the Outstanding Bonds as determined by the CFD Administrator;
+(iii) pay an amount equal to the Zone 3 Outstanding Bonds Ratio multiplied by the total
+Administrative Expenses for CFD No. 8, as determined by the CFD Administrator; (iv) pay
+any amounts required to establish a reserve fund for Zone 3, as determined by the CFD
+Admistrator; (v) pay directly for acquisition or construction of Zone 3’s share of the
+City of Fillmore
+CFD No. 8 (Fillmore Business Park)
+
+June 2, 2008
+Page 6
+
+authorized facilities, as determined by the CFD Administrator; (vi) pay the Zone 3
+Delinquency Amount; less (vii) a credit for funds available to reduce the annual Special Tax
+levy for Zone 3, as determined by the CFD Administrator pursuant to the Indenture.
+"Zone 4 Special Tax Requirement" means the amount required in any Fiscal Year for CFD
+No. 8 to: (i) pay debt service on all Outstanding Zone 4 Bonds due in the calendar year that
+commences in such Fiscal Year; (ii) pay an amount equal to the Zone 4 Outstanding Bonds
+Ratio multiplied by the periodic costs, including but not limited to, credit enhancement and
+rebate payments, related to the Outstanding Bonds as determined by the CFD Administrator;
+(iii) pay an amount equal to the Zone 4 Outstanding Bonds Ratio multiplied by the total
+Administrative Expenses for CFD No. 8, as determined by the CFD Administrator; (iv) pay
+any amounts required to establish a reserve fund for Zone 4, as determined by the CFD
+Admistrator; (v) pay directly for acquisition or construction of Zone 4’s share of the
+authorized facilities, as determined by the CFD Administrator; (vi) pay the Zone 4
+Delinquency Amount; less (vii) a credit for funds available to reduce the annual Special Tax
+levy for Zone 4, as determined by the CFD Administrator pursuant to the Indenture.
+"Zone 5 Special Tax Requirement" means the amount required in any Fiscal Year for CFD
+No. 8 to: (i) pay debt service on all Outstanding Zone 5 Bonds due in the calendar year that
+commences in such Fiscal Year; (ii) pay an amount equal to the Zone 5 Outstanding Bonds
+Ratio multiplied by the periodic costs, including but not limited to, credit enhancement and
+rebate payments, related to the Outstanding Bonds as determined by the CFD Administrator;
+(iii) pay an amount equal to the Zone 5 Outstanding Bonds Ratio multiplied by the total
+Administrative Expenses for CFD No. 8, as determined by the CFD Administrator; (iv) pay
+any amounts required to establish a reserve fund for Zone 5, as determined by the CFD
+Admistrator; (v) pay directly for acquisition or construction of Zone 5’s share of the
+authorized facilities, as determined by the CFD Administrator; (vi) pay the Zone 5
+Delinquency Amount; less (vii) a credit for funds available to reduce the annual Special Tax
+levy for Zone 5, as determined by the CFD Administrator pursuant to the Indenture.
+B.
+
+ASSIGNMENT TO LAND USE CATEGORIES
+Each Fiscal Year, all Taxable Property within CFD No. 8 shall be classified as Zone
+Property, Taxable Public Property, or Taxable Property Owner Association Property and
+shall be subject to Special Taxes in accordance with the rate and method of apportionment
+determined pursuant to Sections C and D below.
+
+C.
+
+MAXIMUM SPECIAL TAX
+1.
+
+Zone Property, Taxable Public Property, and Taxable Property Owner
+Association Property
+(a).
+
+Maximum Special Tax
+The Fiscal Year 2008-09 Maximum Special Tax for each Assessor’s Parcel
+in each Zone classified as Zone Property, Taxable Public Property, and
+Taxable Property Owner Association Property is shown below in Table 1.
+
+City of Fillmore
+CFD No. 8 (Fillmore Business Park)
+
+June 2, 2008
+Page 7
+
+TABLE 1
+Maximum Special Tax for Zone Property, Taxable Public Property, and
+Taxable Property Owner Association Property in
+Community Facilities District No. 8
+Fiscal Year 2008-09
+Zone
+
+Zone Description
+
+1
+
+The Stop (TSAF, LLC)
+
+$26,540 per Acre
+
+2
+
+The Stop (Karasiuk)
+
+$17,782 per Acre
+
+3
+
+Perry Ranch Project
+
+$8,000 per Acre
+
+4
+
+Sespe Creek Properties, LLC (Maxwell)
+
+$18,182 per Acre
+
+5
+
+KDF/Coe Family
+
+$16,931 per Acre
+
+(b).
+
+Maximum Special Tax
+
+Increase in the Maximum Special Tax
+On each July 1, commencing on July 1, 2009, the Maximum Special Tax hall
+be increased by an amount equal to two percent (2%) of the amount in effect
+for the previous Fiscal Year.
+
+D.
+
+METHOD OF APPORTIONMENT OF THE SPECIAL TAX
+1.
+
+ZONE 1
+Commencing with Fiscal Year 2008-09 and for each following Fiscal Year, the
+Council shall determine the Zone 1 Special Tax Requirement and shall levy the
+Special Tax in Zone 1 until the total Special Tax levy equals the Zone 1 Special Tax
+Requirement. The Special Tax shall be levied each Fiscal Year as follows:
+First: The Special Tax shall be levied on each Assessor’s Parcel of Zone Property at
+up to 100% of the applicable Maximum Special Tax to satisfy the Zone 1 Special
+Tax Requirement;
+Second: If additional monies are needed to satisfy the Zone 1 Special Tax
+Requirement after the first step has been completed, then the Special Tax shall be
+levied Proportionately on each Assessor’s Parcel of Taxable Property Owner
+Association Property at up to the Maximum Special Tax for Taxable Property Owner
+Association Property;
+Third: If additional monies are needed to satisfy the Zone 1 Special Tax
+Requirement after the first two steps have been completed, then the Special Tax shall
+be levied Proportionately on each Assessor’s Parcel of Taxable Public Property at up
+to the Maximum Special Tax for Taxable Public Property.
+
+City of Fillmore
+CFD No. 8 (Fillmore Business Park)
+
+June 2, 2008
+Page 8
+
+2.
+
+ZONE 2
+Commencing with Fiscal Year 2008-09 and for each following Fiscal Year, the
+Council shall determine the Zone 2 Special Tax Requirement and shall levy the
+Special Tax in Zone 2 until the total Special Tax levy equals the Zone 2 Special Tax
+Requirement. The Special Tax shall be levied each Fiscal Year as follows:
+First: The Special Tax shall be levied on each Assessor’s Parcel of Zone Property at
+up to 100% of the applicable Maximum Special Tax to satisfy the Zone 2 Special
+Tax Requirement;
+Second: If additional monies are needed to satisfy the Zone 2 Special Tax
+Requirement after the first step has been completed, then the Special Tax shall be
+levied Proportionately on each Assessor’s Parcel of Taxable Property Owner
+Association Property at up to the Maximum Special Tax for Taxable Property Owner
+Association Property;
+Third: If additional monies are needed to satisfy the Zone 2 Special Tax
+Requirement after the first two steps have been completed, then the Special Tax shall
+be levied Proportionately on each Assessor’s Parcel of Taxable Public Property at up
+to the Maximum Special Tax for Taxable Public Property.
+
+3.
+
+ZONE 3
+Commencing with Fiscal Year 2008-09 and for each following Fiscal Year, the
+Council shall determine the Zone 3 Special Tax Requirement and shall levy the
+Special Tax in Zone 3 until the total Special Tax levy equals the Zone 3 Special Tax
+Requirement. The Special Tax shall be levied each Fiscal Year as follows:
+First: The Special Tax shall be levied on each Assessor’s Parcel of Zone Property at
+up to 100% of the applicable Maximum Special Tax to satisfy the Zone 3 Special
+Tax Requirement;
+Second: If additional monies are needed to satisfy the Zone 3 Special Tax
+Requirement after the first step has been completed, then the Special Tax shall be
+levied Proportionately on each Assessor’s Parcel of Taxable Property Owner
+Association Property at up to the Maximum Special Tax for Taxable Property Owner
+Association Property;
+Third: If additional monies are needed to satisfy the Zone 3 Special Tax
+Requirement after the first two steps have been completed, then the Special Tax shall
+be levied Proportionately on each Assessor’s Parcel of Taxable Public Property at up
+to the Maximum Special Tax for Taxable Public Property.
+
+City of Fillmore
+CFD No. 8 (Fillmore Business Park)
+
+June 2, 2008
+Page 9
+
+4.
+
+ZONE 4
+Commencing with Fiscal Year 2008-09 and for each following Fiscal Year, the
+Council shall determine the Zone 4 Special Tax Requirement and shall levy the
+Special Tax in Zone 4 until the total Special Tax levy equals the Zone 4 Special Tax
+Requirement. The Special Tax shall be levied each Fiscal Year as follows:
+First: The Special Tax shall be levied on each Assessor’s Parcel of Zone Property at
+up to 100% of the applicable Maximum Special Tax to satisfy the Zone 4 Special
+Tax Requirement;
+Second: If additional monies are needed to satisfy the Zone 4 Special Tax
+Requirement after the first step has been completed, then the Special Tax shall be
+levied Proportionately on each Assessor’s Parcel of Taxable Property Owner
+Association Property at up to the Maximum Special Tax for Taxable Property Owner
+Association Property;
+Third: If additional monies are needed to satisfy the Zone 4 Special Tax
+Requirement after the first two steps have been completed, then the Special Tax shall
+be levied Proportionately on each Assessor’s Parcel of Taxable Public Property at up
+to the Maximum Special Tax for Taxable Public Property.
+
+5.
+
+ZONE 5
+Commencing with Fiscal Year 2008-09 and for each following Fiscal Year, the
+Council shall determine the Zone 5 Special Tax Requirement and shall levy the
+Special Tax in Zone 5 until the total Special Tax levy equals the Zone 5 Special Tax
+Requirement. The Special Tax shall be levied each Fiscal Year as follows:
+First: The Special Tax shall be levied on each Assessor’s Parcel of Zone Property at
+up to 100% of the applicable Maximum Special Tax to satisfy the Zone 5 Special
+Tax Requirement;
+Second: If additional monies are needed to satisfy the Zone 5 Special Tax
+Requirement after the first step has been completed, then the Special Tax shall be
+levied Proportionately on each Assessor’s Parcel of Taxable Property Owner
+Association Property at up to the Maximum Special Tax for Taxable Property Owner
+Association Property;
+Third: If additional monies are needed to satisfy the Zone 5 Special Tax
+Requirement after the first two steps have been completed, then the Special Tax shall
+be levied Proportionately on each Assessor’s Parcel of Taxable Public Property at up
+to the Maximum Special Tax for Taxable Public Property.
+
+City of Fillmore
+CFD No. 8 (Fillmore Business Park)
+
+June 2, 2008
+Page 10
+
+E.
+
+EXEMPTIONS
+No Special Tax shall be levied on up to the number of Acres of Public Property and/or
+Property Owner Association Property in each Zone as shown in Table 2 below.
+TABLE 2
+
+Number of
+Acres of Public
+Property
+
+Number of
+Acres of
+Property Owner
+Association
+Property
+
+Total Number
+of Exempt
+Acres
+
+Zone
+
+Zone Description
+
+1
+
+The Stop (TSAF, LLC)
+
+0.183 Acres
+
+0.000 Acres
+
+0.183 Acres
+
+2
+
+The Stop (Karasiuk)
+
+0.000 Acres
+
+0.000 Acres
+
+0.000 Acres
+
+3
+
+Perry Ranch Project
+
+1.970 Acres
+
+0.000 Acres
+
+1.970 Acres
+
+4
+
+Sespe Creek Properties, LLC (Maxwell)
+
+0.724 Acres
+
+0.000 Acres
+
+0.724 Acres
+
+5
+
+KDF/Coe Family
+
+0.000 Acres
+
+0.000 Acres
+
+0.000 Acres
+
+Tax-exempt status will be irrevocably assigned by the CFD Administrator in the
+chronological order in which property becomes Public Property or Property Owner
+Association Property in each Zone. However, should an Assessor’s Parcel no longer be
+classified as Public Property or Property Owner Association Property its tax-exempt status
+will be revoked.
+Public Property or Property Owner Association Property that is not exempt from the Special
+Tax under this section shall be subject to the levy of the Special Tax and shall be taxed
+Proportionately as part of the second or third step, as applicable, in Section D.1, D.2, D.3,
+D.4 or D.5 above, at up to 100% of the applicable Maximum Special Tax for Taxable Public
+Property or Taxable Property Owner Association Property.
+F.
+
+APPEALS AND INTERPRETATIONS
+Any landowner or resident who feels that the amount of the Special Tax levied on their
+Assessor’s Parcel is in error may submit a written appeal to CFD No. 8. The CFD
+Administrator shall review the appeal and if the CFD Administrator concurs, the amount of
+the Special Tax levied shall be appropriately modified through an adjustment to the Special
+Tax levy in the following Fiscal Year. No refunds shall be given in the current Fiscal Year.
+The Council may interpret this Rate and Method of Apportionment of Special Tax for
+purposes of clarifying any ambiguity and make determinations relative to the annual
+administration of the Special Tax and any landowner or resident appeals. Any decision of
+the Council shall be final and binding as to all persons.
+
+City of Fillmore
+CFD No. 8 (Fillmore Business Park)
+
+June 2, 2008
+Page 11
+
+G.
+
+MANNER OF COLLECTION
+The Special Tax will be collected in the same manner and at the same time as ordinary ad
+valorem property taxes; provided, however, that CFD No. 8 may directly bill the Special
+Tax, may collect Special Taxes at a different time or in a different manner if necessary to
+meet its financial obligations, and may covenant to foreclose and may actually foreclose on
+delinquent Assessor’s Parcels as permitted by the Act.
+
+H.
+
+PREPAYMENT OF SPECIAL TAX
+1.
+
+SPECIAL TAX
+The following definitions apply to this Section H.1:
+"CFD Public Facilities" means either $1.23 million for Zone 1, $893,000 for Zone
+2, $2.08 million for Zone 3, $3.29 million for Zone 4, or $1.81 million for Zone 5 in
+2008 dollars, which shall increase by the Construction Inflation Index on July 1,
+2009, and on each July 1 thereafter, or such lower numbers as (i) shall be determined
+by the CFD Administrator as sufficient to provide the public facilities to be provided
+by CFD No. 8 under the authorized bonding program for CFD No. 8, or (ii) shall be
+determined by the Council concurrently with a covenant that it will not issue any
+more Bonds to be supported by Special Tax levied under this Rate and Method of
+Apportionment as described in Section D.
+"Construction Fund" means an account specifically identified in the Indenture to
+hold funds which are currently available for expenditure to acquire or construct
+public facilities eligible under the Act.
+"Construction Inflation Index" means the annual percentage change in the
+Engineering News-Record Building Cost Index for the City of Los Angeles,
+measured as of the calendar year which ends in the previous Fiscal Year. In the
+event this index ceases to be published, the Construction Inflation Index shall be
+another index as determined by the CFD Administrator that is reasonably comparable
+to the Engineering News-Record Building Cost Index for the City of Los Angeles.
+"Future Facilities Costs" means, for the relevant Zone, the CFD Public Facilities
+minus (i) public facility costs previously paid from the Construction Fund, (ii)
+moneys currently on deposit in the Construction Fund, and (iii) moneys currently on
+deposit in an escrow fund that are expected to be available to finance facilities costs.
+"Outstanding Bonds" means all Previously Issued Bonds which are deemed to be
+outstanding under the Indenture after the first interest and/or principal payment date
+following the current Fiscal Year.
+"Previously Issued Bonds" means all Bonds that have been issued by CFD No. 8
+prior to the date of prepayment.
+
+City of Fillmore
+CFD No. 8 (Fillmore Business Park)
+
+June 2, 2008
+Page 12
+
+(a).
+
+Prepayment in Full
+The obligation of an Assessor's Parcel to pay the Special Tax may be prepaid
+and permanently satisfied as described herein; provided that a prepayment
+may be made only for Assessor’s Parcels of Zone Property and only if there
+are no delinquent Special Taxes with respect to such Assessor's Parcel at the
+time of prepayment. An owner of an Assessor's Parcel intending to prepay
+the Special Tax obligation shall provide the CFD Administrator with written
+notice of intent to prepay. Within 30 days of receipt of such written notice,
+the CFD Administrator shall notify such owner of the prepayment amount of
+such Assessor's Parcel. The CFD Administrator may charge a reasonable fee
+for providing this service. Prepayment must be made not less than 45 days
+prior to the next occurring date that notice of redemption of Bonds from the
+proceeds of such prepayment may be given to the Trustee pursuant to the
+Indenture.
+The Special Tax Prepayment Amount (defined below) shall be calculated as
+summarized below (capitalized terms as defined below):
+Bond Redemption Amount
+plus
+Redemption Premium
+plus
+Future Facilities Amount
+plus
+Defeasance Amount
+plus
+Administrative Fees and Expenses
+less
+Reserve Fund Credit
+less
+Capitalized Interest Credit
+Total: equals
+Prepayment Amount
+As of the proposed date of prepayment, the Special Tax Prepayment Amount
+(defined below) shall be calculated as follows:
+Paragraph No.:
+1.
+
+Confirm that no Special Tax delinquencies apply to such Assessor’s
+Parcel.
+
+2.
+
+For Assessor’s Parcels of Zone Property, compute the Maximum
+Special Tax applicable for the Assessor’s Parcel to be prepaid.
+
+3.
+
+Divide the Maximum Special Tax computed pursuant to paragraph 2
+by the total estimated Maximum Special Tax for all Assessor’s
+Parcels of Taxable Property in such Zone which could be charged in
+the current Fiscal Year on all expected development through buildout
+of such Zone, excluding any Assessor’s Parcels which have been
+prepaid.
+
+4.
+
+Multiply the quotient computed pursuant to paragraph 3 by the
+Outstanding Zone 1 Bonds, Outstanding Zone 2 Bonds, Outstanding
+
+City of Fillmore
+CFD No. 8 (Fillmore Business Park)
+
+June 2, 2008
+Page 13
+
+Zone 3 Bonds, Outstanding Zone 4 Bonds, or Outstanding Zone 5
+Bonds, as applicable, to compute the amount of Outstanding Bonds to
+be retired and prepaid (the "Bond Redemption Amount").
+5.
+
+Multiply the Bond Redemption Amount computed pursuant to
+paragraph 4 by the applicable redemption premium (e.g., the
+redemption price – 100%), if any, on the Outstanding Bonds to be
+redeemed (the "Redemption Premium").
+
+6.
+
+Compute the current Future Facilities Costs.
+
+7.
+
+Multiply the quotient computed pursuant to paragraph 3 by the
+amount determined pursuant to paragraph 6 to compute the amount of
+Future Facilities Costs to be prepaid (the "Future Facilities Amount").
+
+8.
+
+Compute the amount needed to pay interest on the Bond Redemption
+Amount from the first bond interest and/or principal payment date
+following the current Fiscal Year until the earliest redemption date
+for the Outstanding Bonds.
+
+9.
+
+Determine the Special Tax levied on the Assessor’s Parcel in the
+current Fiscal Year which has not yet been paid.
+
+10.
+
+Compute the minimum amount the CFD Administrator reasonably
+expects to derive from the reinvestment of the Special Tax
+Prepayment Amount less the Future Facilities Amount and the
+Administrative Fees and Expenses from the date of prepayment until
+the redemption date for the Outstanding Bonds to be redeemed with
+the prepayment.
+
+11.
+
+Add the amounts computed pursuant to paragraphs 8 and 9 and
+subtract the amount computed pursuant to paragraph 10 (the
+"Defeasance Amount").
+
+12.
+
+Verify the administrative fees and expenses of CFD No. 8, including
+the costs of computation of the prepayment, the costs to invest the
+prepayment proceeds, the costs of redeeming Bonds, and the costs of
+recording any notices to evidence the prepayment and the redemption
+(the "Administrative Fees and Expenses").
+
+13.
+
+If reserve funds for the Outstanding Bonds, if any, are at or above
+100% of the reserve requirement (as defined in the Indenture) on the
+prepayment date, a reserve fund credit shall be calculated as a
+reduction in the applicable reserve fund for the Outstanding Bonds to
+be redeemed pursuant to the prepayment (the "Reserve Fund Credit").
+No Reserve Fund Credit shall be granted if reserve funds are below
+100% of the reserve requirement.
+
+City of Fillmore
+CFD No. 8 (Fillmore Business Park)
+
+June 2, 2008
+Page 14
+
+14.
+
+If any capitalized interest for the Outstanding Bonds will not have
+been expended at the time of the first interest and/or principal
+payment following the current Fiscal Year, a capitalized interest
+credit shall be calculated by multiplying the quotient computed
+pursuant to paragraph 3 by the expected balance in the capitalized
+interest fund after such first interest and/or principal payment (the
+"Capitalized Interest Credit").
+
+15.
+
+The Special Tax prepayment is equal to the sum of the amounts
+computed pursuant to paragraphs 4, 5, 7, 11 and 12, less the amounts
+computed pursuant to paragraphs 13 and 14 (the "Prepayment
+Amount").
+
+16.
+
+From the Prepayment Amount, the amounts computed pursuant to
+paragraphs 4, 5, 11, 13 and 14 shall be deposited into the appropriate
+fund as established under the Indenture and be used to retire
+Outstanding Bonds or make debt service payments. The amount
+computed pursuant to paragraph 7 shall be deposited into the
+Construction Fund. The amount computed pursuant to paragraph 12
+shall be retained by CFD No. 8.
+
+The Special Tax Prepayment Amount may be sufficient to redeem other than
+a $5,000 increment of Bonds. In such cases, the increment above $5,000 or
+integral multiple thereof will be retained in the appropriate fund established
+under the Indenture to be used with the next prepayment of bonds or to make
+debt service payments.
+As a result of the payment of the current Fiscal Year’s Special Tax levy as
+determined under paragraph 9 (above), the CFD Administrator shall remove
+the current Fiscal Year’s Special Tax levy for such Assessor’s Parcel from
+the County tax rolls. With respect to any Assessor's Parcel that is prepaid,
+the Council shall cause a suitable notice to be recorded in compliance with
+the Act, to indicate the prepayment of the Special Tax and the release of the
+Special Tax lien on such Assessor’s Parcel, and the obligation of such
+Assessor's Parcel to pay the Special Tax shall cease.
+Notwithstanding the foregoing, no Special Tax prepayment shall be allowed
+unless the amount of Maximum Special Tax that may be levied on Taxable
+Property within CFD No. 8 (after excluding 2.877 Acres of Public Property
+and/or Property Owner Association Property as set forth in Section E) both
+prior to and after the proposed prepayment is at least 1.1 times the maximum
+annual debt service on all Outstanding Bonds.
+(b).
+
+Prepayment in Part
+The Special Tax on an Assessor’s Parcel of Zone Property may be partially
+prepaid. The amount of the prepayment shall be calculated as in Section H.1;
+
+City of Fillmore
+CFD No. 8 (Fillmore Business Park)
+
+June 2, 2008
+Page 15
+
+except that a partial prepayment shall be calculated according to the
+following formula:
+PP = [(PE – AE) x F] + AE
+These terms have the following meaning:
+AE=
+PP =
+PE =
+F=
+
+the Administrative Fees and Expenses
+the partial prepayment
+the Special Tax Prepayment Amount calculated according to Section
+H.1
+the percentage by which the owner of the Assessor’s Parcel(s) is
+partially prepaying the Special Tax.
+
+The owner of any Assessor’s Parcel who desires such prepayment shall
+notify the CFD Administrator of such owner’s intent to partially prepay the
+Special Tax and the percentage by which the Special Tax shall be prepaid.
+The CFD Administrator shall provide the owner with a statement of the
+amount required for the partial prepayment of the Special Tax for an
+Assessor’s Parcel within thirty (30) days of the request and may charge a
+reasonable fee for providing this service. With respect to any Assessor’s
+Parcel that is partially prepaid, the City shall (i) distribute the funds remitted
+to it according to Section H.1, and (ii) indicate in the records of CFD No. 8
+that there has been a partial prepayment of the Special Tax and that a portion
+of the Special Tax with respect to such Assessor’s Parcel, equal to the
+outstanding percentage (1.00 - F) of the remaining Maximum Special Tax,
+shall continue to be levied on such Assessor’s Parcel pursuant to Section E.
+I.
+
+TERM OF SPECIAL TAX
+The Special Tax shall be levied for a period not to exceed fifty years commencing with
+Fiscal Year 2008-09.
+
+K:\CLIENTS2\Fillmore\mello\CFD 8\RMA\CFD8 (Fillmore Business Park) RMA 06.doc
+
+City of Fillmore
+CFD No. 8 (Fillmore Business Park)
+
+June 2, 2008
+Page 16
+
+EXHIBIT A
+
+Boundary Map
+
+PROPOSED BOUNDARIES OF
+CITY OF FILLMORE
+COMMUNITY FACILITIES DISTRICT NO. 8
+(FILLMORE BUSINESS PARK)
+COUNTY OF VENTURA
+STATE OF CALIFORNIA
+
+SHEET 1 OF 2
+
+(1) Filed in the office of the City Clerk of the City of
+Fillmore this ____ day of ________, 2008.
+_________________________________
+Angela Mumme, Deputy City Clerk
+
+(2) I hereby certify that the within map showing the proposed
+boundaries of City of Fillmore Community Facilities District
+No. 8 (Fillmore Business Park), Ventura County, State of
+California, was approved by the City Council at a regular
+meeting thereof, held on this______ day of ___________,
+2008, by its Resolution No. _______________.
+
+(3) Filed this ____ day of ____________, 2008, at the hour of _____
+o'clock __m, in Book __________ of Maps of Assessment and
+Community Facilities Districts at pages ____________ and as
+Instrument No. ________________ in the office of the County
+Recorder of Ventura County, State of California.
+Fee _______________
+
+_________________________________
+Angela Mumme, Deputy City Clerk
+
+County Recorder of Ventura County
+
+Assessor Parcel Numbers within
+Community Facilities District No. 8:
+052-0-160-070
+052-0-160-110
+052-0-160-120
+046-0-050-150
+046-0-050-160
+046-0-060-010
+046-0-060-160
+046-0-060-110
+
+C.F.D. Zone Number
+
+Exempt recording requested, per CA Government Code § 6103
+
+A
+VENTUR
+
+126
+
+RIVER
+
+ST.
+
+C ST.
+
+RIVER
+
+D ST.
+
+Hwy.
+
+E ST.
+
+State
+
+ST.
+
+Reference is hereby made to the Assessor maps
+of the County of Ventura, California, for a
+description of the lines and dimensions of
+each lot and parcel.
+
+Boundaries of City of Fillmore
+Community Facilities District No. 8
+(Fillmore Business Park)
+
+Assessor Parcel Number
+
+C.F.D. Zone Number
+
+B ST.
+
+PROPOSED BOUNDARIES OF
+CITY OF FILLMORE
+COMMUNITY FACILITIES DISTRICT NO. 8
+(FILLMORE BUSINESS PARK)
+COUNTY OF VENTURA
+STATE OF CALIFORNIA
+
+SHEET 2 OF 2
+
+

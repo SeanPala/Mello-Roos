@@ -1,0 +1,701 @@
+
+
+
+RATE AND METHOD OF APPORTIONMENT FOR
+CASITAS MUNICIPAL WATER DISTRICT
+COMMUNITY FACILITIES DISTRICT NO. 2013-1 (OJAI)
+
+A Special Tax shall be levied on all Assessor’s Parcels of Taxable Property in Casitas Municipal
+Water District ("CMWD") Community Facilities District No. 2013-1 (Ojai) (“CFD No. 2013-1”)
+and collected each Fiscal Year, commencing in Fiscal Year 2013-14, in an amount determined
+through the application of this Rate and Method of Apportionment as described below. All of
+the real property in CFD No. 2013-1, unless exempted by law or by the provisions hereof, shall
+be taxed for the purposes, to the extent and in the manner herein provided.
+A.
+
+DEFINITIONS
+
+The terms hereinafter set forth have the following meanings:
+“Acreage” means the land area of an Assessor’s Parcel as shown on an Assessor’s Parcel Map,
+or if the land area is not shown on an Assessor’s Parcel Map, the land area shown on the
+applicable final map, parcel map, condominium plan, or other map or plan recorded with the
+County or the land area calculated to the reasonable satisfaction of the CFD Administrator using
+the boundaries set forth on such map or plan. The parcel square footage of an Assessor’s Parcel
+is equal to the Acreage of such parcel multiplied by 43,560 (the “Parcel Square Footage”).
+“Act” means the Mello-Roos Community Facilities Act of 1982, being Chapter 2.5, Part 1,
+Division 2 of Title 5 of the California Government Code.
+“Administrative Expenses” means the actual or reasonably estimated costs directly related to
+the administration of CFD No. 2013-1, including but not limited to: the costs of computing the
+Special Taxes and preparing the annual Special Tax collection schedules (whether by CMWD or
+designee thereof or both); the costs of collecting the Special Taxes (whether by CMWD or
+otherwise); the costs of remitting the Special Taxes to the Trustee; the costs of the Trustee
+(including its legal counsel) in the discharge of the duties required of it under the Indenture; the
+costs to CMWD, CFD No. 2013-1 or any designee thereof of complying with arbitrage rebate
+requirements; the costs to CMWD, CFD No. 2013-1 or any designee thereof of complying with
+disclosure requirements of CMWD, CFD No. 2013-1 or obligated persons associated with
+applicable federal and state securities laws and the Act; the costs associated with preparing
+Special Tax disclosure statements and responding to public inquiries regarding the Special
+Taxes; the costs of CMWD, CFD No. 2013-1 or any designee thereof related to an appeal of the
+Special Tax; the costs associated with the release of funds from an escrow account; and
+CMWD’s annual administration fees and third party expenses. Administrative Expenses shall
+also include amounts estimated by CMWD or advanced by CMWD or CFD No. 2013-1 for any
+other administrative purposes of CFD No. 2013-1, including attorney’s fees and other costs
+related to commencing and pursuing to completion any foreclosure of delinquent Special Taxes.
+“Assessor’s Parcel” means a lot or parcel to which an Assessor’s parcel number is assigned as
+determined from an Assessor Parcel Map or the applicable assessment roll.
+
+Casitas Municipal Water District
+Community Facilities District No. 2013-1 (Ojai)
+
+
+
+January 29, 2013
+Page 1
+
+
+
+
+
+“Assessor’s Parcel Map” means an official map of the County Assessor designating parcels by
+Assessor’s Parcel number.
+“Authorized Facilities” means those facilities eligible to be funded by CFD No. 2013-1, as set
+forth in the Resolution of Intention to establish CFD No. 2013-1 as adopted by CMWD.
+“Bond Issue” means one series of CFD No. 2013-1 Bonds.
+“Certificate of Occupancy” means a certificate issued by the City or the County that authorizes
+the actual occupancy of Developed Property by a resident(s) or a business(es).
+“CFD Administrator” means the Person designated by CFD No. 2013-1 to administer the
+Special Tax according to this RMA.
+“CFD No. 2013-1” means CMWD Community Facilities District No. 2013-1 (Ojai).
+“CFD No. 2013-1 Bonds” means any bonds or other debt (as defined in Section 53317(d) of the
+Act), whether in one or more series, issued or incurred by CMWD for CFD No. 2013-1.
+"City" means the City of Ojai.
+"Commercial Property" means all Assessor’s Parcels of Non-Residential Property excluding
+Industrial Property.
+“Condominium Unit” means (1) a residential condominium as described in Civil Code Section
+1351(f) and (2) any residential dwelling that is not a Single Family Detached Unit or a dwelling
+unit located on Multifamily Attached Property, as determined by the CFD Administrator.
+“County” means the County of Ventura.
+“Developed Property” means, for each Fiscal Year, all Taxable Property, for which a building
+permit was issued on or before May 1 of the Fiscal Year preceding the Fiscal Year for which the
+Special Taxes are being levied.
+“Fiscal Year” means the period starting July 1 and ending on the following June 30.
+“Indenture” means the indenture, fiscal agent agreement, resolution or other instrument
+pursuant to which CFD No. 2013-1 Bonds are issued, as modified, amended and/or
+supplemented from time to time, and any instrument replacing or supplementing the same.
+"Industrial Property" means all Assessor’s Parcels of Developed Property for which a building
+permit(s) was issued for construction of a non-residential structure(s) which is primarily used
+for: manufacturing, procession, fabricating, assembly, refining, repairing, packaging, or
+treatment of goods, material or produce; research and development; and/or warehousing and
+wholesale distribution of goods, material, or produce.
+
+Casitas Municipal Water District
+Community Facilities District No. 2013-1 (Ojai)
+
+
+
+January 29, 2013
+Page 2
+
+
+
+
+
+“Land Use Class” means any of the classes listed in Table 1, below.
+“Maximum Special Tax” means the maximum Special Tax, determined in accordance with
+Section C below, that can be levied in any Fiscal Year on any Assessor’s Parcel of Taxable
+Property.
+“Multifamily Attached Property” means an Assessor's Parcel on which is located a structure or
+structures with multiple residential dwelling units, all of which are offered for rent and are not
+available for sale to individual owners.
+“Non-Residential Floor Area” means the total building square footage of the non-residential
+building(s) located on an Assessor’s Parcel, measured from outside wall to outside wall, not
+including space devoted to stairwells, basement storage, required corridors, public restrooms,
+elevator shafts, light courts, vehicle parking and areas incident thereto, mechanical equipment
+incidental to the operation of such building, and covered public pedestrian circulation areas,
+including atriums, lobbies, plazas, patios, decks, arcades and similar areas, except such public
+circulation areas or portions thereof that are used solely for commercial purposes. The
+determination of Non-Residential Floor Area shall be made by reference to the building
+permit(s) issued for such Assessor’s Parcel and/or to the appropriate records kept by the City's
+Building Division or the County's Building and Safety Division, as reasonably determined by the
+CFD Administrator.
+“Non-Residential Property” means all Assessor’s Parcels of Developed Property for which a
+building permit permitting the construction thereon of one or more non-residential facilities has
+been issued by the City or the County.
+“Outstanding Bonds” means all CFD No. 2013-1 Bonds which are outstanding under an
+Indenture.
+“Property Owner Association Property” means, for each Fiscal Year, (i) any property within
+the boundaries of CFD No. 2013-1 that was owned by a property owner association, including
+any master or sub-association, as of January 1 of the prior Fiscal Year, (ii) any property located
+in a Final Subdivision that was recorded as of the May 1 preceding the Fiscal Year in which the
+Special Tax is being levied and which, as determined from such Final Subdivision, is or will be
+open space, a common area recreation facility, or a private street, or (iii) any property which, as
+of the May 1 preceding the Fiscal Year for which the Special Tax is being levied, has been
+conveyed, irrevocably dedicated, or irrevocably offered to a property owner’s association,
+including any master or sub-association, provided such conveyance, dedication, or offer is
+submitted to the CFD Administrator by May 1 preceding the Fiscal Year for which the Special
+Tax is being levied.
+“Proportionately” means, for Developed Property, that the ratio of the actual Special Tax levy
+to the Maximum Special Tax is equal for all Assessor’s Parcels of Developed Property.
+“Public Property” means property within the boundaries of CFD No. 2013-1 that is (i) owned
+by, or irrevocably offered or dedicated to, the federal government, the State, the County, the
+Casitas Municipal Water District
+Community Facilities District No. 2013-1 (Ojai)
+
+
+
+January 29, 2013
+Page 3
+
+
+
+
+
+City, CMWD, or any local government or other public agency, provided that any property leased
+by a public agency to a private entity and subject to taxation under Section 53340.1 of the Act
+shall not be considered Public Property and shall be taxed and classified according to its actual
+use; or (ii) encumbered by a public utility easement making impractical its use for any purpose
+other than that set forth in the easement.
+“Rate and Method of Apportionment” or “RMA” means this Rate and Method of
+Apportionment of Special Tax.
+“Residential Property” means all Assessor’s Parcels of Developed Property for which a
+building permit permitting the construction thereon of one or more residential dwelling units has
+been issued by the City or the County. Residential Property includes Single Family Detached
+Units, Condominium Units and units located on Multi-Family Attached Property.
+“Single Family Detached Unit” means an individual residential dwelling unit that does not
+share a common wall with another residential dwelling unit.
+“Special Tax” means the special tax to be levied in each Fiscal Year on each Assessor’s Parcel
+of Taxable Property within CFD No. 2013-1 to fund the Special Tax Requirement.
+“Special Tax Requirement” means that amount required in any Fiscal Year, commencing in
+Fiscal Year 2013-2014, for CFD No. 2013-1 to: (i) pay debt service on all Outstanding Bonds
+due in the calendar year commencing in such Fiscal Year; (ii) pay periodic costs with respect to
+the CFD No. 2013-1 Bonds, including but not limited to, costs of credit enhancement and federal
+arbitrage rebate payments due in the calendar year commencing in such Fiscal Year; (iii) pay
+Administrative Expenses payable or expected to be payable in the calendar year commencing in
+such Fiscal Year; (iv) pay any amounts required to establish or replenish any reserve funds for all
+Outstanding Bonds; (v) replace revenue that CFD No. 2013-1 reasonably expects not to receive
+due to anticipated Special Tax delinquencies, if and to the extent deemed necessary and
+supported by a written explanation and calculation; (vi) pay any litigation expenses and costs
+CMWD is required to pay to Golden State Water Company pursuant to California Code of Civil
+Procedure Section 1268.610 et seq. if CMWD files eminent domain to acquire Golden State’s
+Ojai water utility and the eminent domain proceeding is abandoned or dismissed for any reason;
+(vii) pay directly for the acquisition or construction of Authorized Facilities; less (viii) a credit
+for funds available to reduce the annual Special Tax levy.
+“State” means the State of California.
+“Taxable Property” means all of the Assessor’s Parcels of Developed Property within the
+boundaries of CFD No. 2013-1 which are not exempt from the Special Tax pursuant to
+applicable law or Section E below.
+“Trustee” means the trustee or fiscal agent under the Indenture.
+“Undeveloped Property” means property that is not Developed Property, Property Owner
+Association Property or Public Property.
+Casitas Municipal Water District
+Community Facilities District No. 2013-1 (Ojai)
+
+
+
+January 29, 2013
+Page 4
+
+
+B.
+
+
+ASSIGNMENT TO LAND USE CATEGORIES
+
+Each Fiscal Year, all Taxable Property within CFD No. 2013-1 shall be classified as Developed
+Property, Undeveloped Property, Property Owner Association Property or Public Property, and
+shall be subject to Special Taxes in accordance with this Rate and Method of Apportionment
+determined pursuant to Sections C and D below.
+C.
+
+MAXIMUM SPECIAL TAX RATE
+
+Developed Property shall be assigned to Land Use Classes 1 through 8 as listed in Table 1
+below.
+(1).
+
+Maximum Special Tax
+
+The Maximum Special Tax for each Assessor’s Parcel determined to be Developed
+Property shall be based on the Land Use Class in Table 1 within which such Assessor's
+Parcel is classified. As indicated in the table, the Maximum Special Tax may be
+increased after the CFD sells an additional Bond Issue.
+TABLE 1
+Maximum Special Tax for Developed Property within
+Community Facilities District No. 2013-1 (Ojai)
+Fiscal Year 2013-2014
+Maximum Special Tax
+Land Use
+Class
+
+Description
+
+Parcel Square
+Footage
+
+Prior to
+2nd Bond Issue
+
+After
+2nd Bond Issue
+
+1
+
+Single Family
+Detached Unit
+
+43,560 Sq. Ft.
+or greater
+
+$345 per unit
+
+$2,093 per unit
+
+2
+
+Single Family
+Detached Unit
+
+22,000 to less than
+43,560 Sq. Ft.
+
+$203 per unit
+
+$1,235 per unit
+
+3
+
+Single Family
+Detached Unit
+
+10,000 to less than
+22,000 Sq. Ft.
+
+$122 per unit
+
+$741 per unit
+
+4
+
+Single Family
+Detached Unit
+
+Less than
+10,000 Sq. Ft.
+
+$79 per unit
+
+$480 per unit
+
+NA
+
+$67 per unit
+
+$407 per unit
+
+NA
+
+$57 per unit
+
+$349 per unit
+
+5
+
+6
+
+Condominium
+Unit
+Multifamily
+Attached
+Property
+
+Casitas Municipal Water District
+Community Facilities District No. 2013-1 (Ojai)
+
+
+
+January 29, 2013
+Page 5
+
+
+
+
+Maximum Special Tax
+Land Use
+Class
+
+Description
+
+Parcel Square
+Footage
+
+7
+
+Commercial
+Property
+
+NA
+
+8
+
+Industrial
+Property
+
+NA
+
+(2).
+
+Prior to
+2nd Bond Issue
+$0.050 per
+square foot of
+Non-Residential
+Floor Area
+$0.026 per
+square foot of
+Non-Residential
+Floor Area
+
+After
+2nd Bond Issue
+$0.303 per square
+foot of NonResidential
+Floor Area
+$0.159 per square
+foot of NonResidential
+Floor Area
+
+Increase in the Maximum Special Tax
+
+The Fiscal Year 2013-14 Maximum Special Tax, identified in Table 1 above, shall
+increase annually, commencing on July 1, 2014 and on July 1 of each Fiscal Year
+thereafter, by an amount equal to two percent (2%) of the amount in effect for the
+previous Fiscal Year.
+(3).
+
+Multiple Land Use Classes
+
+In some instances an Assessor’s Parcel of Developed Property may contain more than
+one Land Use Class. The Maximum Special Tax levied on an Assessor’s Parcel in such
+case shall be the sum of the Maximum Special Tax for all Land Use Classes located on
+that Assessor’s Parcel. The CFD Administrator’s allocation to each type of property shall
+be final in the absence of manifest error.
+D.
+
+METHOD OF APPORTIONMENT OF THE SPECIAL TAX
+
+Commencing with Fiscal Year 2013-14 and for each following Fiscal Year, the CFD
+Administrator shall determine the Special Tax Requirement and shall provide for the levy the
+Special Tax as follows:
+The Special Tax shall be levied Proportionately on each Assessor’s Parcel of Developed
+Property at up to 100% of the Maximum Special Tax in order to satisfy the Special Tax
+Requirement.
+Notwithstanding the above, under no circumstances will the Special Tax levied in any Fiscal
+Year against any Assessor’s Parcel of Residential Property for which a Certificate of Occupancy
+has been issued be increased by more than ten percent above the amount that would have been
+levied in that Fiscal Year as a consequence of delinquency or default by the owner(s) of any
+other Assessor’s Parcel(s) within CFD No. 2013-1.
+
+Casitas Municipal Water District
+Community Facilities District No. 2013-1 (Ojai)
+
+
+
+January 29, 2013
+Page 6
+
+
+E.
+
+
+EXEMPTIONS
+
+No Special Tax shall be levied on Public Property and/or Property Owner Association Property
+in CFD No. 2013-1. However, should an Assessor’s Parcel no longer be classified as Public
+Property or Property Owner Association Property, it shall become subject to the Special Tax.
+F.
+
+MANNER OF COLLECTION
+
+The Special Tax shall be collected in the same manner and at the same time as ordinary ad
+valorem property taxes; provided, however, that CMWD may directly bill the Special Tax,
+and/or may collect Special Taxes at a different time or in a different manner if necessary to meet
+its financial obligations, and may covenant to foreclose and may actually foreclose on delinquent
+Assessor’s Parcels.
+G.
+
+APPEALS AND INTERPRETATIONS
+
+Any landowner or resident who feels that the amount of the Special Tax levied on his/her
+Assessor’s Parcel is in error may submit a written appeal to the CFD Administrator, provided
+that the appellant is current in his/her payment of Special Taxes. During the pendency of an
+appeal, all Special Taxes previously levied must be paid on or before the payment date
+established when the levy was made. The CFD Administrator shall review the appeal and if the
+CFD Administrator concurs, the amount of the Special Tax levied shall be appropriately
+modified through an adjustment to the Special Tax levy in the following Fiscal Year. No refunds
+shall be given in the current Fiscal Year.
+The CFD Administrator may interpret this Rate and Method of Apportionment for purposes of
+clarifying any ambiguity and/or making determinations relative to the annual administration of
+the Special Tax and any landowner or resident appeals. Any decision of the CFD Administrator
+shall be final and binding as to all persons.
+H.
+
+PREPAYMENT OF THE SPECIAL TAX
+
+The following additional definitions apply to this Section H:
+“CFD Public Facilities Costs” means either $42,250,000 in 2013 dollars, which shall increase
+by the Construction Inflation Index on July 1, 2014, and on each July 1 thereafter, or such lower
+number as (i) shall be determined by the CFD Administrator as sufficient to provide funding for
+all of the Authorized Facilities, or (ii) shall be determined by CMWD concurrently with a
+covenant that it will not issue any more CFD No. 2013-1 Bonds (except refunding bonds) to be
+supported by the Special Tax levy under this Rate and Method of Apportionment as described in
+Section D herein.
+“Construction Inflation Index” means the annual percentage change in the Engineering News
+Record Building Cost Index for the City of Los Angeles, measured as of the month of December
+in the calendar year which ends in the previous Fiscal Year. In the event this index ceases to be
+published, the Construction Inflation Index shall be another index as determined by the CFD
+Casitas Municipal Water District
+Community Facilities District No. 2013-1 (Ojai)
+
+
+
+January 29, 2013
+Page 7
+
+
+
+
+
+Administrator that is reasonably comparable to the Engineering News Record Building Cost
+Index for the City of Los Angeles.
+“Future Facilities Costs” means the CFD Public Facilities Costs minus (i) costs of Authorized
+Facilities previously paid from the Improvement Fund, (ii) moneys currently on deposit in the
+Improvement Fund available to pay costs of Authorized Facilities, (iii) moneys currently on
+deposit in an escrow fund that are expected to be available to finance the cost of Authorized
+Facilities, and (iv) the amount the CFD Administrator reasonably expects to derive from the
+reinvestment of these funds.
+“Improvement Fund” means a fund or account specifically identified in the Indenture to hold
+funds which are currently available for expenditure to acquire or construct Authorized Facilities.
+“Previously Issued Bonds” means, for any Fiscal Year, all Outstanding Bonds that are still
+outstanding under the Indenture after the principal payment date following the current Fiscal
+Year.
+1.
+
+Prepayment in Full
+
+The obligation of the Assessor’s Parcel to pay the Special Tax may be fully prepaid and
+permanently satisfied as described herein, provided that a prepayment may be made only for
+Assessor’s Parcels of Developed Property, or an Assessor’s Parcel of Undeveloped Property for
+which a building permit has been issued, and only if there are no delinquent Special Taxes with
+respect to such Assessor’s Parcel at the time of prepayment. An owner of an Assessor’s Parcel
+intending to prepay the Special Tax obligation shall provide the CFD Administrator with written
+notice of intent to prepay. Within 30 days of receipt of such written notice, the CFD
+Administrator shall notify such owner of the prepayment amount for such Assessor’s Parcel.
+The CFD Administrator may charge such owner a reasonable fee for providing this service. If
+there are Outstanding Bonds, prepayment must be made not less than 30 days prior to the next
+occurring date that notice of redemption of CFD No. 2013-1 Bonds from the proceeds of such
+prepayment may be given by the Trustee pursuant to the Indenture.
+The Special Tax Prepayment Amount (defined below) shall be calculated as summarized below
+(capitalized terms as defined below):
+Bond Redemption Amount
+plus
+Redemption Premium
+plus
+Future Facilities Amount
+plus
+Defeasance Amount
+plus
+Prepayment Fees and Expenses
+less
+Reserve Fund Credit
+less
+Capitalized Interest Credit
+Total: equals Special Tax Prepayment Amount
+As of the proposed date of prepayment, the Special Tax Prepayment Amount shall be calculated
+as follows:
+Casitas Municipal Water District
+Community Facilities District No. 2013-1 (Ojai)
+
+
+
+January 29, 2013
+Page 8
+
+
+
+
+1.
+
+Confirm that no Special Tax delinquencies apply to such Assessor’s Parcel.
+
+2.
+
+For Assessor’s Parcels of Developed Property, compute the Maximum Special Tax. For
+Assessor’s Parcels of Undeveloped Property for which a building permit has been issued,
+compute the Maximum Special Tax for that Assessor’s Parcel as though it were already
+designated as Developed Property, based upon the building permit which has already
+been issued for such Assessor’s Parcel.
+
+3.
+
+Divide the Maximum Special Tax computed pursuant to paragraph 2 by the total
+estimated Maximum Special Tax levy for the entire CFD No. 2013-1 based on the
+Developed Property Special Tax which could be levied in the current Fiscal Year on all
+Developed Property CFD No. 2013-1, excluding any Assessor’s Parcels which have been
+prepaid.
+
+4.
+
+Multiply the quotient computed pursuant to paragraph 3 by the Previously Issued Bonds
+to compute the amount of Previously Issued Bonds to be retired and prepaid (the “Bond
+Redemption Amount”).
+
+5.
+
+Multiply the Bond Redemption Amount computed pursuant to paragraph 4 by the
+applicable redemption premium (e.g., the redemption price-100%), if any, on the
+Previously Issued Bonds to be redeemed (the “Redemption Premium”).
+
+6.
+
+Compute the current Future Facilities Costs.
+
+7.
+
+Multiply the quotient computed pursuant to paragraph 3 by the amount determined
+pursuant to paragraph 6 to compute the amount of Future Facilities Costs to be prepaid
+(the “Future Facilities Amount”).
+
+8.
+
+Compute the amount needed to pay interest on the Bond Redemption Amount from the
+bond principal payment date following the current Fiscal Year until the earliest
+redemption date for the Previously Issued Bonds. Notwithstanding the above, if the
+Previously Issued Bonds may be redeemed in the current Fiscal Year, but after the date of
+prepayment, the amount needed to pay the interest under this step shall equal zero.
+
+9.
+
+Determine the Special Tax levied on the Assessor’s Parcel in the current Fiscal Year
+which has not yet been paid.
+
+10. Compute the minimum amount the CFD Administrator reasonably expects to derive from
+the reinvestment of the Special Tax Prepayment Amount less the Future Facilities
+Amount and the Prepayment Fees and Expenses (defined below) from the date of
+prepayment until the redemption date for the Previously Issued Bonds to be redeemed
+with the prepayment.
+11. Add the amounts computed pursuant to paragraphs 8 and 9 and subtract the amount
+computed pursuant to paragraph 10 (the “Defeasance Amount”).
+
+Casitas Municipal Water District
+Community Facilities District No. 2013-1 (Ojai)
+
+
+
+January 29, 2013
+Page 9
+
+
+
+
+12. The prepayment fees and expenses of CFD No. 2013-1 are as calculated by the CFD
+Administrator and include the costs of computation of the prepayment, the costs to invest
+the prepayment proceeds, the costs of redeeming CFD No. 2013-1 Bonds, and the costs
+of recording any notices to evidence the prepayment and the redemption (the
+“Prepayment Fees and Expenses”).
+13. The reserve fund credit (the “Reserve Fund Credit”) shall equal the lesser of: (a) the
+expected reduction in the reserve requirement (as defined in the Indenture), if any,
+associated with the redemption of Previously Issued Bonds as a result of the prepayment,
+or (b) the amount derived by subtracting the new reserve requirement (as defined in the
+Indenture) in effect after the redemption of Previously Issued Bonds as a result of the
+prepayment from the balance in the reserve fund on the prepayment date, but in no event
+shall such amount be less than zero. No Reserve Fund Credit shall be granted if the
+amount then on deposit in the reserve fund for the Previously Issued Bonds is below the
+reserve requirement (as defined in the Indenture).
+14. If any capitalized interest for the Previously Issued Bonds is projected to remain
+unexpended as of the date immediately following the principal payment following the
+current Fiscal Year, a capitalized interest credit shall be calculated by multiplying the
+quotient computed pursuant to paragraph 3 by the expected balance in the capitalized
+interest fund or account on such date (the “Capitalized Interest Credit”).
+15. The Special Tax prepayment is equal to the sum of the amounts computed pursuant to
+paragraphs 4, 5, 7, 11 and 12, less the amounts computed pursuant to paragraphs 13 and
+14 (the “Special Tax Prepayment Amount”).
+
+From the Special Tax Prepayment Amount, the amounts computed pursuant to paragraphs 4, 5,
+11, 13 and 14 shall be deposited into the appropriate fund as established under the Indenture and
+be used to retire CFD No. 2013-1 Bonds or make debt service payments. The amount computed
+pursuant to paragraph 7 shall be deposited into the Improvement Fund. The amount computed
+pursuant to paragraph 12 shall be retained by CMWD.
+Upon confirmation of the payment of the current Fiscal Year’s Special Tax levy as determined
+under paragraph 9 (above), the CFD Administrator shall remove the current Fiscal Year’s
+Special Tax levy for such Assessor’s Parcel from the County tax rolls. With respect to any
+Assessor’s Parcel that is prepaid, the CFD Administrator shall cause a suitable notice to be
+recorded in compliance with the Act, to indicate the prepayment of the Special Tax and the
+release of the Special Tax lien on such Assessor’s Parcel, and the obligation of such Assessor’s
+Parcel to pay the Special Tax shall cease.
+Notwithstanding the foregoing, no Special Tax prepayment shall be allowed unless, at the time
+of such proposed prepayment, the amount of Maximum Special Tax that may be levied on
+Taxable Property within CFD No. 2013-1 (after excluding the property exempted under Section
+E herein) after the proposed prepayment is at least equal to the sum of (i) the Administrative
+Expenses, as defined in Section A above, and (ii) 1.10 times the debt service necessary to
+support the remaining Outstanding Bonds in each corresponding Fiscal Year.
+Casitas Municipal Water District
+Community Facilities District No. 2013-1 (Ojai)
+
+
+
+January 29, 2013
+Page 10
+
+
+2.
+
+
+Prepayment in Part
+
+The obligation of the Assessor’s Parcel to pay the Special Tax may be partially prepaid as
+described herein, provided that a partial prepayment may be made only for Assessor’s Parcels of
+Developed Property, or an Assessor’s Parcel of Undeveloped Property for which a building
+permit has been issued, and only if there are no delinquent Special Taxes with respect to such
+Assessor’s Parcel at the time of partial prepayment. The amount of the prepayment shall be
+calculated as in Section H.1; except that a partial prepayment shall be calculated according to the
+following formula:
+PP = [(PE – PFE) x D] + PFE
+These terms have the following meaning:
+PP =
+PE =
+D=
+
+the partial prepayment.
+the Special Tax Prepayment Amount calculated according to Section H.1.
+the percentage, expressed as a decimal, by which the owner of the Assessor’s Parcel is
+partially prepaying the Special Tax.
+PFE = the Prepayment Fees and Expenses calculated according to Section H.1.
+The owner of any Assessor’s Parcel who desires such prepayment shall notify the CFD
+Administrator of such owner’s intent to partially prepay the Special Tax and the percentage by
+which the Special Tax shall be prepaid. The CFD Administrator shall provide the owner with a
+statement of the amount required for the partial prepayment of the Special Tax for his/her
+Assessor’s Parcel within 30 days of the request and may charge a reasonable fee for providing
+this service. With respect to any Assessor’s Parcel that is partially prepaid, the CFD
+Administrator shall (i) distribute or cause to be distributed the funds remitted to it according to
+Section H.1, and (ii) indicate in the records of CFD No. 2013-1 that there has been a partial
+prepayment of the Special Tax and that a portion of the Special Tax with respect to such
+Assessor’s Parcel, equal to the outstanding percentage (1.00 - D) of the remaining Maximum
+Special Tax, shall continue to be levied on such Assessor’s Parcel pursuant to Section D herein.
+I.
+
+TERM OF SPECIAL TAX
+
+The Special Tax shall be levied for a period not to exceed forty years commencing with Fiscal
+Year 2013-14, provided however that the Special Tax will cease to be levied in an earlier Fiscal
+Year if the CFD Administrator has determined that all required interest and principal payments
+on the CFD No. 2013-1 Bonds have been paid.
+
+Casitas Municipal Water District
+Community Facilities District No. 2013-1 (Ojai)
+
+
+
+January 29, 2013
+Page 11
+
+

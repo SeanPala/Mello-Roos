@@ -1,0 +1,99 @@
+{
+  "source": {
+    "cfd_name": "City of Fillmore Community Facilities District No. 8",
+    "agency": "City of Fillmore",
+    "base_fiscal_year": "2008-09",
+    "variant": "C",
+    "escalation": {
+      "type": "percent_annual",
+      "rate": 0.02,
+      "multiplier": null,
+      "start": "2009-07-01"
+    }
+  },
+  "rate_classes": [
+    {
+      "class_id": 1,
+      "class_name": "Zone 1",
+      "class_description": "The Stop (TSAF, LLC)",
+      "class_other": null,
+      "land_use": null,
+      "max_tax_rate": 26540.0,
+      "max_tax_unit": "per acre",
+      "max_tax_qty": null,
+      "max_tax_qty_source": "acreage",
+      "backup_tax_flag": false,
+      "backup_tax_rate": null,
+      "backup_tax_text": null,
+      "display_order": 1,
+      "rate_type": null
+    },
+    {
+      "class_id": 2,
+      "class_name": "Zone 2",
+      "class_description": "The Bluffs",
+      "class_other": null,
+      "land_use": null,
+      "max_tax_rate": 17782.0,
+      "max_tax_unit": "per acre",
+      "max_tax_qty": null,
+      "max_tax_qty_source": "acreage",
+      "backup_tax_flag": false,
+      "backup_tax_rate": null,
+      "backup_tax_text": null,
+      "display_order": 2,
+      "rate_type": null
+    },
+    {
+      "class_id": 3,
+      "class_name": "Zone 3",
+      "class_description": "Sespe Hills",
+      "class_other": null,
+      "land_use": null,
+      "max_tax_rate": 17782.0,
+      "max_tax_unit": "per acre",
+      "max_tax_qty": null,
+      "max_tax_qty_source": "acreage",
+      "backup_tax_flag": false,
+      "backup_tax_rate": null,
+      "backup_tax_text": null,
+      "display_order": 3,
+      "rate_type": null
+    },
+    {
+      "class_id": 4,
+      "class_name": "Zone 4",
+      "class_description": "Mountain View Estates",
+      "class_other": null,
+      "land_use": null,
+      "max_tax_rate": 17782.0,
+      "max_tax_unit": "per acre",
+      "max_tax_qty": null,
+      "max_tax_qty_source": "acreage",
+      "backup_tax_flag": false,
+      "backup_tax_rate": null,
+      "backup_tax_text": null,
+      "display_order": 4,
+      "rate_type": null
+    },
+    {
+      "class_id": 5,
+      "class_name": "Zone 5",
+      "class_description": "Sespe Hills II",
+      "class_other": null,
+      "land_use": null,
+      "max_tax_rate": 17782.0,
+      "max_tax_unit": "per acre",
+      "max_tax_qty": null,
+      "max_tax_qty_source": "acreage",
+      "backup_tax_flag": false,
+      "backup_tax_rate": null,
+      "backup_tax_text": null,
+      "display_order": 5,
+      "rate_type": null
+    }
+  ],
+  "one_time_taxes": [],
+  "extraction_confidence": "high",
+  "flags": []
+}
