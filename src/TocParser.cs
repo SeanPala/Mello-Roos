@@ -60,6 +60,7 @@ public static class TocParser
             })
             .Where(e => IsValidListedPage(e.PageNumber, totalPdfPages, e.Title))
             .Where(e => !IsGarbledTitle(e.Title))
+            .Where(e => !IsBondBoilerplateTitle(e.Title))
             .Where(e => LooksLikeRmaTocTitle(e.Title))
             .Where(e => e.Score >= minScore)
             .OrderByDescending(e => e.Score)
@@ -106,6 +107,9 @@ public static class TocParser
     /// <summary>True when a TOC line looks like an RMA section header, not bond boilerplate.</summary>
     public static bool LooksLikeRmaTocTitle(string title)
     {
+        if (IsBondBoilerplateTitle(title))
+            return false;
+
         var t = NormalizeOcr(title).ToLowerInvariant();
 
         if (Regex.IsMatch(t, @"(?i)appendix\s+[a-z0-9]+\s+rate\s+and\s+method"))
@@ -120,12 +124,24 @@ public static class TocParser
         if (Regex.IsMatch(t, @"(?i)section\s+c\b") && Regex.IsMatch(t, @"(?i)special\s+tax|apportionment|rate"))
             return true;
 
-        if (Regex.IsMatch(t, @"(?i)method\s+of\s+apportionment|apportionment\s+of\s+special\s+tax"))
+        return false;
+    }
+
+    /// <summary>Bond indenture TOC lines that mention taxes but are not the RMA appendix.</summary>
+    public static bool IsBondBoilerplateTitle(string title)
+    {
+        var t = NormalizeOcr(title).ToLowerInvariant();
+
+        if (Regex.IsMatch(t, @"(?i)special\s+tax\s+fund|administrative\s+expense|bond\s+trust\s+fund|debt\s+service|requisition\s+for\s+payment"))
             return true;
 
-        // Bond indenture body text — not a TOC section title
-        if (Regex.IsMatch(t, @"(?i)special\s+tax\s+fund\s+and\s+deposit|administrative\s+expense\s+account|indenture|trustee|underwriter"))
-            return false;
+        if (Regex.IsMatch(t, @"(?i)indenture|trustee|underwriter|official\s+statement|paying\s+agent|registrar|form\s+of\s+approving"))
+            return true;
+
+        // "Apportionment of Special Tax" alone appears in bond body/TOC, not the RMA section title.
+        if (Regex.IsMatch(t, @"(?i)(?:method\s+of\s+)?apportionment\s+of\s+special\s+tax")
+            && !Regex.IsMatch(t, @"(?i)appendix\s+[a-z0-9]+\s+rate\s+and\s+method|rate\s+and\s+method\s+of\s+apportionment|\brma\b|section\s+c\b"))
+            return true;
 
         return false;
     }
@@ -165,7 +181,10 @@ public static class TocParser
             if (trimmed.Length < 8 || IsGarbledTitle(trimmed))
                 continue;
 
-            if (!Regex.IsMatch(trimmed, @"(?i)rate|method|apportionment|special\s+tax|appendix", RegexOptions.None))
+            if (!Regex.IsMatch(trimmed, @"(?i)appendix\s+[a-z0-9]+\s+rate\s+and\s+method|rate\s+and\s+method\s+of\s+apportionment|\brma\b|section\s+c\b.*(?:special\s+tax|apportionment|rate)", RegexOptions.None))
+                continue;
+
+            if (IsBondBoilerplateTitle(trimmed))
                 continue;
 
             var page = ExtractTrailingPageNumber(trimmed, requireLeader: true);
@@ -329,6 +348,9 @@ public static class TocParser
 
         if (Regex.IsMatch(t, @"special\s+tax"))
             score += 15;
+
+        if (IsBondBoilerplateTitle(title))
+            score -= 120;
 
         if (Regex.IsMatch(t, @"legal\s+opinion|form\s+of\s+approving"))
             score -= 80;
