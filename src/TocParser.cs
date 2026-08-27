@@ -77,6 +77,26 @@ public static class TocParser
         return FindBestRmaEntry(entries, minScore, totalPdfPages);
     }
 
+    /// <summary>True when TOC tail uses appendix section numbering (e.g. ...... D-1), not a listed PDF page.</summary>
+    public static bool ContainsRmaAppendixTitle(string text) =>
+        FindRmaAppendixTitle(text) is not null;
+
+    public static string? FindRmaAppendixTitle(string text)
+    {
+        text = NormalizeOcr(text);
+        foreach (var chunk in AppendixSplit.Split(text))
+        {
+            if (!AppendixRmaBlock.IsMatch(chunk))
+                continue;
+
+            var title = ExtractAppendixTitle(chunk);
+            if (title is not null)
+                return title;
+        }
+
+        return null;
+    }
+
     public static int? FindSectionEndPage(IReadOnlyList<TocEntry> entries, int rmaStartPage, int totalPdfPages, int maxSpan)
     {
         var nextMajor = entries
@@ -161,7 +181,13 @@ public static class TocParser
             var titleIdx = chunk.IndexOf(title, StringComparison.OrdinalIgnoreCase);
             var tail = titleIdx >= 0 ? chunk[(titleIdx + title.Length)..] : chunk;
             var page = ExtractTrailingPageNumber(tail, requireLeader: true);
-            if (page is null || !IsValidListedPage(page.Value, totalPdfPages, title))
+            if (page is null)
+            {
+                if (HasAppendixPageRef(tail))
+                    continue; // appendix section ref (e.g. D-1) — not a listed page; use binary search
+                continue;
+            }
+            if (!IsValidListedPage(page.Value, totalPdfPages, title))
                 continue;
 
             entries.Add(new TocEntry
@@ -254,6 +280,92 @@ public static class TocParser
             if (n >= 1 && !IsLikelyYear(n))
                 return n;
         }
+
+        return null;
+    }
+
+    public static string? ExtractAppendixLetter(string title)
+    {
+        if (string.IsNullOrWhiteSpace(title))
+            return null;
+
+        var match = Regex.Match(title, @"(?i)appendix\s+([A-G])\b");
+        return match.Success ? match.Groups[1].Value.ToUpperInvariant() : null;
+    }
+
+    /// <summary>Detect appendix-style page refs (D-1, E-1) — section labels, not TOC listed pages.</summary>
+    internal static bool HasAppendixPageRef(string text) => ParseAppendixPageRef(text) is not null;
+
+    public static AppendixPageRef? ParseAppendixPageRef(string text, string? expectedLetter = null)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+            return null;
+
+        text = NormalizeOcr(text).Trim();
+
+        if (expectedLetter is not null)
+        {
+            var fromExpected = ParseExpectedAppendixRef(text, expectedLetter);
+            if (fromExpected is not null)
+                return fromExpected;
+        }
+
+        foreach (var pattern in new[]
+                 {
+                     @"(?<![A-Z])([A-G])[\s\-–—]+(\d{1,3})\s*$",
+                     @"(?i)\b([A-G])[\s\-–—]+(\d{1,3})\b",
+                     @"^[\-–—]\s*([A-G])[\s\-–—]+(\d{1,3})\s*[\-–—]$",
+                     @"(?i)\b([A-G])(\d{1,3})\b"
+                 })
+        {
+            var match = Regex.Match(text, pattern);
+            if (match.Success
+                && int.TryParse(match.Groups[2].Value, out var subPage)
+                && subPage >= 1)
+            {
+                return new AppendixPageRef(match.Groups[1].Value.ToUpperInvariant(), subPage);
+            }
+        }
+
+        var garbled = Regex.Match(text, @"(?i)[\.\s0]+(?:e)?([A-G])\s*[>|1lI]\s*(\d?)");
+        if (garbled.Success)
+        {
+            var sub = garbled.Groups[2].Success && int.TryParse(garbled.Groups[2].Value, out var n) && n >= 1
+                ? n
+                : 1;
+            return new AppendixPageRef(garbled.Groups[1].Value.ToUpperInvariant(), sub);
+        }
+
+        var garbledShort = Regex.Match(text, @"(?i)[\.\s]{2,}([A-G])\s*l\b");
+        if (garbledShort.Success)
+            return new AppendixPageRef(garbledShort.Groups[1].Value.ToUpperInvariant(), 1);
+
+        return null;
+    }
+
+    private static AppendixPageRef? ParseExpectedAppendixRef(string text, string expectedLetter)
+    {
+        var letter = Regex.Escape(expectedLetter.ToUpperInvariant());
+        var patterns = new[]
+        {
+            $@"(?i)(?:{letter}|0)[\s\-–—I1l>|\.]{{0,5}}(\d{{1,3}})",
+            $@"(?i)\b{letter}[\s\-–—]*(\d{{1,3}})\b",
+            $@"(?i)[\-–—]\s*{letter}[\s\-–—]+(\d{{1,3}})\s*[\-–—]"
+        };
+
+        foreach (var pattern in patterns)
+        {
+            var match = Regex.Match(text, pattern);
+            if (match.Success
+                && int.TryParse(match.Groups[1].Value, out var subPage)
+                && subPage >= 1)
+            {
+                return new AppendixPageRef(expectedLetter.ToUpperInvariant(), subPage);
+            }
+        }
+
+        if (Regex.IsMatch(text, $@"(?i){letter}\s*[>|1lI]\b"))
+            return new AppendixPageRef(expectedLetter.ToUpperInvariant(), 1);
 
         return null;
     }

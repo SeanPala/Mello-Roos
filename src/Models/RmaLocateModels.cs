@@ -30,9 +30,12 @@ public sealed class RmaLocateResult
 
 public sealed class RmaLocateOptions
 {
+    public const int DefaultTocFirstPage = 1;
+    public const int DefaultTocLastPage = 15;
+
     public required string PdfPath { get; init; }
-    public int TocFirstPage { get; init; } = 1;
-    public int TocLastPage { get; init; } = 25;
+    public int TocFirstPage { get; init; } = DefaultTocFirstPage;
+    public int TocLastPage { get; init; } = DefaultTocLastPage;
     public int ChunkSize { get; init; } = 30;
     public int Padding { get; init; } = 2;
     public int MaxSpan { get; init; } = 35;
@@ -43,4 +46,8 @@ public sealed class RmaLocateOptions
     public int TocMinScore { get; init; } = 35;
     public int? PageOffset { get; init; }
     public bool AutoPageOffset { get; init; } = true;
+    public int ContentChunkSize { get; init; } = 12;
+    public bool UseVisionLocate { get; init; } = true;
+    public string VisionLocateModel { get; init; } = VisionSectionLocator.DefaultModel;
+    public PageTextCache? PageCache { get; init; }
 }

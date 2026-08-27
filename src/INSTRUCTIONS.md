@@ -4,6 +4,8 @@ PDF → LLM JSON → deterministic escalation → `[dbo].[Rate]` SQL INSERTs.
 
 **Prototype:** review `extraction.json` before using SQL in production.
 
+**Quick reference:** see [`README.md`](../README.md) for the two main command-line examples (short RMA vs long bond package).
+
 ---
 
 ## 1. Install once
@@ -45,9 +47,13 @@ mkdir -p out
 
 ---
 
-## 3. Quick start — extract an RMA
+## 3. Two ways to run `extract`
 
-Works on text-native RMA PDFs (e.g. Fillmore CFD 8):
+Same command for both paths. The tool chooses based on PDF size and whether you pass `--pages`.
+
+### Short RMA — text-native, under ~50 pages
+
+Example: **Fillmore CFD 8** — a standalone RMA with selectable text.
 
 ```bash
 dotnet run --project src/MelloRoos.csproj -- extract \
@@ -58,16 +64,58 @@ dotnet run --project src/MelloRoos.csproj -- extract \
   -o out/rates.sql
 ```
 
-| Input | Meaning |
-|-------|---------|
-| `--debt-id` | Existing `[dbo].[Debt].debt_id` in your database |
-| `--run-date` | Escalation date (default: today) |
-| `--save-json` | Intermediate LLM output for human review |
-| `-o` | SQL output file |
+| | |
+|---|---|
+| **You need** | `GEMINI_API_KEY`, `--debt-id` |
+| **Pipeline** | pdftotext → LLM JSON → escalate → SQL |
+| **OCR?** | No (add `--force-ocr` only if scanned) |
+| **Page range?** | No — reads the whole PDF |
+| **Output** | `out/extraction.json` + `out/rates.sql` |
 
-**Expected output:** `out/extraction.json` + `out/rates.sql`
+Sanity check: Zone 1 base $26,540/acre → **$37,905.66/acre** at run date 2026-08-18.
 
-Fillmore CFD 8 sanity check: Zone 1 base $26,540/acre → **$37,905.66/acre** at run date 2026-08-18.
+---
+
+### Long bond package — 50+ pages, RMA in appendix
+
+Example: **CFD 1, Series 2002** — 258-page scanned bond package; RMA is near the end.
+
+```bash
+dotnet run --project src/MelloRoos.csproj -- extract \
+  "Reference-Docs/CFD 1, Series 2002 (1).pdf" \
+  --debt-id 123 \
+  --force-ocr \
+  --save-json out/extraction.json \
+  -o out/rates.sql
+```
+
+| | |
+|---|---|
+| **You need** | `GEMINI_API_KEY`, `--debt-id`, `--force-ocr` |
+| **Pipeline** | TOC + offset (p. 1–15) → validate → binary search fallback → text LLM → vision Table 1 → escalate → SQL |
+| **Page range?** | **No** — auto-discovery finds the RMA section |
+| **Vision?** | Auto — gemini-2.0-flash, gpt-4o-mini, or claude-sonnet-4 on Table 1 at 400 DPI |
+| **Output** | JSON + SQL; expect review flags on first run |
+
+Optional IDP fallback when Table 1 OCR is garbled:
+
+```bash
+export LLAMA_CLOUD_API_KEY='...'
+
+dotnet run --project src/MelloRoos.csproj -- extract \
+  "Reference-Docs/CFD 1, Series 2002 (1).pdf" \
+  --debt-id 123 --force-ocr --llamaparse \
+  --save-json out/extraction.json -o out/rates.sql
+```
+
+Override auto-discovery if you know the pages:
+
+```bash
+dotnet run --project src/MelloRoos.csproj -- extract \
+  "Reference-Docs/CFD 1, Series 2002 (1).pdf" \
+  --debt-id 123 --force-ocr --no-auto-locate --pages 198-210 \
+  --save-json out/extraction.json -o out/rates.sql
+```
 
 ---
 
@@ -81,64 +129,106 @@ dotnet run --project src/MelloRoos.csproj -- <command> ...
 
 ### `extract` — full pipeline
 
-PDF → text → LLM → escalation → SQL
+PDF → text → LLM → (vision/IDP on large docs) → escalation → SQL
 
-```bash
-dotnet run --project src/MelloRoos.csproj -- extract "Reference-Docs/your-rma.pdf" \
-  --debt-id 123 \
-  --run-date 2026-08-18 \
-  --save-json out/extraction.json \
-  -o out/rates.sql
-```
+See **§3** for copy-paste examples (short RMA vs long bond package).
 
 | Option | Purpose |
 |--------|---------|
 | `--provider gemini\|openai\|claude` | LLM provider (default: gemini) |
-| `--model <name>` | Override model (default: gemini-3.6-flash) |
+| `--model <name>` | Text LLM model (default: gemini-3.6-flash) |
+| `--vision-provider <name>` | Vision provider: gemini, openai, or claude (default: same as `--provider`) |
+| `--vision-model <name>` | Vision model (default: gemini-2.0-flash, gpt-4o-mini, or claude-sonnet-4-20250514) |
 | `--json out/extraction.json` | Skip LLM; use reviewed JSON |
 | `--save-text out/text.txt` | Save acquired PDF text |
 | `--force` | Emit SQL even when review flags exist |
 | `--force-ocr` | Always OCR (for scanned PDFs) |
-| `--pages 1-30` | Limit OCR/extraction to page range |
+| `--pages 1-30` | Explicit page range (skips auto-locate) |
+| `--no-auto-locate` | Disable page discovery on large PDFs |
+| `--vision-table` | Force vision on Table 1 (auto on large PDFs) |
+| `--table-pages 199-205` | Page range for vision (default: auto-detected) |
+| `--table-dpi 400` | DPI for table page images (default 400) |
+| `--llamaparse` | Fall back to LlamaParse if vision incomplete |
+| `--textract` | Fall back to AWS Textract if still incomplete |
 | `--land-use-type 0` | Default `land_use_type` for all SQL rows |
 
-### `locate` — find RMA pages in long bond packages
+**Large-doc auto-pipeline (PDF > 50 pages, no `--pages`):** TOC + offset (p. 1–15) → validate → binary search fallback → text LLM → vision Table 1 → optional IDP.
 
-Use before `extract` on large scanned docs (e.g. 258-page Series 2002):
+### `table-extract` — Table 1 only (optional IDP fallbacks)
+
+For scanned bond packages where OCR garbles Table 1. Runs **Gemini vision** on page images first; optionally falls back to **LlamaParse** or **AWS Textract**.
+
+```bash
+# Vision only (pages 199–205 = Table 1 region for Series 2002)
+dotnet run --project src/MelloRoos.csproj -- table-extract \
+  "Reference-Docs/CFD 1, Series 2002 (1).pdf" \
+  --pages 199-205 \
+  -o out/table-rates.json
+
+# Merge into an existing extraction.json
+dotnet run --project src/MelloRoos.csproj -- table-extract \
+  "Reference-Docs/CFD 1, Series 2002 (1).pdf" \
+  --pages 199-205 \
+  --merge-json out/extraction.json \
+  -o out/extraction.json
+```
+
+| Option | Purpose |
+|--------|---------|
+| `--pages 199-205` | PDF pages containing Table 1 |
+| `--table-dpi 400` | Image resolution (default 400) |
+| `--llamaparse` | Fall back to LlamaParse if vision misses rates |
+| `--textract` | Fall back to AWS Textract if still incomplete |
+| `--no-vision` | Skip vision (use with `--llamaparse` or `--textract`) |
+| `--merge-json` | Patch `rate_classes` into existing extraction JSON |
+
+**Env vars for fallbacks:**
+
+```bash
+export LLAMA_CLOUD_API_KEY='...'   # --llamaparse
+export AWS_ACCESS_KEY_ID='...'     # --textract
+export AWS_SECRET_ACCESS_KEY='...'
+export AWS_REGION='us-west-2'
+```
+
+**Integrated into `extract`** — on large PDFs this runs automatically; no extra flags needed beyond `--llamaparse` / `--textract` for IDP fallbacks.
+
+### `analyze` — same pipeline, SQL output (no review gate)
+
+Uses the identical discovery + vision/IDP pipeline as `extract`, but skips the JSON review gate and writes SQL directly.
+
+```bash
+dotnet run --project src/MelloRoos.csproj -- analyze \
+  "Reference-Docs/CFD 1, Series 2002 (1).pdf" \
+  --debt-id 123 --force-ocr \
+  --llamaparse \
+  -o out/rates.sql
+```
+
+### `locate` — preview discovery (TOC + offset → binary search fallback)
+
+Dry-run the page discovery step without running extraction:
 
 ```bash
 dotnet run --project src/MelloRoos.csproj -- locate \
   "Reference-Docs/CFD 1, Series 2002 (1).pdf" \
-  --toc-loose \
-  --toc-pages 1-40
+  --toc-loose --force-ocr
 ```
 
-Prints **PDF pages** to use with `--pages` in `extract`. Also shows listed TOC pages and page offset.
+Prints discovered PDF pages. When the TOC lists an appendix with `D-1`-style refs, the locator **OCRs the back third in 12-page chunks** and searches page **body text** for the appendix title — not footer page numbers. If that misses, **Gemini vision** classifies ~8 page images (requires `GEMINI_API_KEY`).
 
 | Option | Purpose |
 |--------|---------|
 | `--toc-loose` | Fuzzy OCR-tolerant TOC matching |
-| `--toc-pages 1-40` | PDF pages to OCR for table of contents |
+| `--toc-pages 1-15` | PDF pages to OCR for table of contents |
 | `--toc-min-score 35` | Lower = more permissive TOC matching (default floor 35 with `--toc-loose`) |
 | `--page-offset 6` | Manual: PDF page = listed TOC page + N (Series 2002 ≈ 6) |
 | `--no-auto-offset` | Disable auto offset detection |
-| `--chunk-size 30` | Pages per chunk for keyword fallback scan |
 | `--padding 2` | Extra pages before/after RMA section |
 | `--max-span 35` | Max RMA section length if end unknown |
 | `--json` | Output result as JSON |
 
-Then run the suggested `extract` command from the output.
-
-**If TOC fails on a bond package** (e.g. OCR garbles the index), use manual pages. For *CFD 1, Series 2002*, Appendix D RMA is around listed page 92; with offset 6 that is PDF pages ~98–130:
-
-```bash
-dotnet run --project src/MelloRoos.csproj -- extract \
-  "Reference-Docs/CFD 1, Series 2002 (1).pdf" \
-  --debt-id <ID> --force-ocr --pages 98-130 \
-  --save-json out/extraction.json -o out/rates.sql
-```
-
-Or let keyword fallback finish (slower — scans the whole PDF in chunks).
+Then run `extract` (see §3) — or pass `--no-auto-locate --pages N-M` if you want to override.
 
 ### `text` — PDF text only (no LLM)
 
@@ -192,15 +282,15 @@ Escalation is **not** in the JSON — it is computed deterministically from `sou
 
 ---
 
-## 6. PDF types
+## 6. Which PDF type?
 
-| Type | What to do |
-|------|------------|
-| **Text-native RMA** (most Fillmore/Casitas docs) | `extract` directly |
-| **Scanned RMA** (≤20 pp) | `extract --force-ocr` |
-| **Long bond package** (100+ pp) | `locate` first → `extract --force-ocr --pages <range>` |
+| PDF | Pages | Command |
+|-----|-------|---------|
+| **Short RMA** (Fillmore, Casitas) | &lt; 50, text-native | `extract` — no `--force-ocr`, no `--pages` |
+| **Scanned RMA** | &lt; 50 | `extract --force-ocr` |
+| **Long bond package** (Series 2002) | 50+ | `extract --force-ocr` — auto-discovery + vision |
 
-Never OCR an entire 258-page bond package — always `locate` or set `--pages` manually.
+Never OCR an entire 258-page bond package without auto-locate or explicit `--pages`.
 
 ---
 

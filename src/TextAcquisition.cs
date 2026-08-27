@@ -8,11 +8,16 @@ namespace MelloRoos;
 public static class TextAcquisition
 {
     public const int DefaultDpi = 300;
+    public const int PrintedPageProbeDpi = 150;
+    public const int AppendixPageProbeDpi = 200;
     public const string DefaultPsm = "6";
     public const int MinTextChars = 1000;
     public const int LargePdfPageThreshold = 50;
 
-    public static TextAcquisitionResult Acquire(string pdfPath, TextAcquisitionOptions? options = null)
+    public static TextAcquisitionResult Acquire(
+        string pdfPath,
+        TextAcquisitionOptions? options = null,
+        PageTextCache? pageCache = null)
     {
         options ??= new TextAcquisitionOptions();
         var pdf = Path.GetFullPath(pdfPath);
@@ -26,11 +31,26 @@ public static class TextAcquisition
                 $"Warning: PDF has {pageCount} pages. Consider --pages to limit OCR scope.");
         }
 
+        if (pageCache is not null
+            && options.FirstPage is int cacheFirst
+            && options.LastPage is int cacheLast)
+        {
+            if (pageCache.HasCompleteRange(cacheFirst, cacheLast))
+            {
+                Console.Error.WriteLine(
+                    $"Reusing cached OCR for pages {cacheFirst}-{cacheLast} ({cacheLast - cacheFirst + 1} pages).");
+                return pageCache.ToResult(cacheFirst, cacheLast, pageCount);
+            }
+
+            return AcquireMissingPages(pdf, options, pageCache, pageCount);
+        }
+
         if (!options.ForceOcr)
         {
             var text = RunPdftotext(pdf, options.FirstPage, options.LastPage);
             if (text.Length >= MinTextChars)
             {
+                pageCache?.AddFromMarkedText(text, options.FirstPage ?? 1);
                 return new TextAcquisitionResult
                 {
                     Text = text,
@@ -42,6 +62,7 @@ public static class TextAcquisition
         }
 
         var ocrText = RunOcr(pdf, options);
+        pageCache?.AddFromMarkedText(ocrText, options.FirstPage ?? 1);
         return new TextAcquisitionResult
         {
             Text = ocrText,
@@ -49,6 +70,69 @@ public static class TextAcquisition
             CharCount = ocrText.Length,
             PageCount = pageCount
         };
+    }
+
+    private static TextAcquisitionResult AcquireMissingPages(
+        string pdfPath,
+        TextAcquisitionOptions options,
+        PageTextCache pageCache,
+        int? pageCount)
+    {
+        var first = options.FirstPage!.Value;
+        var last = options.LastPage!.Value;
+        var missing = pageCache.MissingPages(first, last);
+        var reused = last - first + 1 - missing.Count;
+
+        if (missing.Count > 0)
+        {
+            Console.Error.WriteLine(
+                $"Reusing {reused} cached page(s); OCR {missing.Count} additional page(s)...");
+
+            foreach (var (rangeFirst, rangeLast) in ContiguousRanges(missing))
+            {
+                var rangeOptions = new TextAcquisitionOptions
+                {
+                    ForceOcr = options.ForceOcr,
+                    FirstPage = rangeFirst,
+                    LastPage = rangeLast,
+                    Dpi = options.Dpi,
+                    TesseractPsm = options.TesseractPsm
+                };
+
+                var ocrText = RunOcr(pdfPath, rangeOptions);
+                pageCache.AddFromMarkedText(ocrText, rangeFirst);
+            }
+        }
+        else
+        {
+            Console.Error.WriteLine($"Reusing cached OCR for pages {first}-{last} ({last - first + 1} pages).");
+        }
+
+        return pageCache.ToResult(first, last, pageCount, method: reused > 0 ? "ocr-cached" : options.ForceOcr ? "ocr-forced" : "ocr-fallback");
+    }
+
+    private static IEnumerable<(int First, int Last)> ContiguousRanges(IReadOnlyList<int> pages)
+    {
+        if (pages.Count == 0)
+            yield break;
+
+        var start = pages[0];
+        var prev = pages[0];
+
+        for (var i = 1; i < pages.Count; i++)
+        {
+            if (pages[i] == prev + 1)
+            {
+                prev = pages[i];
+                continue;
+            }
+
+            yield return (start, prev);
+            start = pages[i];
+            prev = pages[i];
+        }
+
+        yield return (start, prev);
     }
 
     public static int? GetPageCount(string pdfPath)
@@ -119,6 +203,190 @@ public static class TextAcquisition
         return pages;
     }
 
+    /// <summary>
+    /// Reads a printed/listed page number from headers or footers without full-page OCR.
+    /// Tries embedded text first, then OCR on cropped margin strips (~12% of page height).
+    /// </summary>
+    public static int? TryReadPrintedPageNumber(string pdfPath, int page, TextAcquisitionOptions? options = null)
+    {
+        options ??= new TextAcquisitionOptions();
+
+        var embedded = RunPdftotext(Path.GetFullPath(pdfPath), page, page);
+        if (PageOffsetDetector.TryExtractPrintedArabicPage(embedded) is int fromText)
+        {
+            Console.Error.WriteLine($"  page {page}: printed {fromText} (embedded text)");
+            return fromText;
+        }
+
+        foreach (var marginText in TryReadMarginOcrTexts(pdfPath, page))
+        {
+            if (PageOffsetDetector.TryExtractPrintedArabicPage(marginText) is int fromStrip)
+            {
+                Console.Error.WriteLine($"  page {page}: printed {fromStrip} (margin strip, {PrintedPageProbeDpi} DPI)");
+                return fromStrip;
+            }
+        }
+
+        Console.Error.WriteLine($"  page {page}: no printed page number found");
+        return null;
+    }
+
+    /// <summary>Reads appendix margin page refs (e.g. D-1) from header/footer strips only.</summary>
+    public static AppendixPageRef? TryReadAppendixPageRef(
+        string pdfPath,
+        int page,
+        TextAcquisitionOptions? options = null,
+        string? expectedLetter = null)
+    {
+        options ??= new TextAcquisitionOptions();
+        var pdf = Path.GetFullPath(pdfPath);
+
+        var embedded = RunPdftotext(pdf, page, page);
+        if (TocParser.ParseAppendixPageRef(embedded, expectedLetter) is { } fromText)
+        {
+            Console.Error.WriteLine($"  page {page}: appendix {fromText.Letter}-{fromText.SubPage} (embedded text)");
+            return fromText;
+        }
+
+        foreach (var marginText in TryReadAppendixMarginOcrTexts(pdfPath, page))
+        {
+            if (TocParser.ParseAppendixPageRef(marginText, expectedLetter) is { } fromStrip)
+            {
+                Console.Error.WriteLine(
+                    $"  page {page}: appendix {fromStrip.Letter}-{fromStrip.SubPage} (margin OCR: \"{Truncate(marginText, 40)}\")");
+                return fromStrip;
+            }
+        }
+
+        return null;
+    }
+
+    private static string Truncate(string value, int max) =>
+        value.Length <= max ? value : value[..max] + "...";
+
+    internal static int? TryReadPrintedPageNumberFromEmbedded(string pdfPath, int page) =>
+        PageOffsetDetector.TryExtractPrintedArabicPage(RunPdftotext(Path.GetFullPath(pdfPath), page, page));
+
+    private static IEnumerable<string> TryReadAppendixMarginOcrTexts(string pdfPath, int page)
+    {
+        var pdf = Path.GetFullPath(pdfPath);
+        var tempDir = Path.Combine(Path.GetTempPath(), $"mello-roos-page-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(tempDir);
+
+        try
+        {
+            var prefix = Path.Combine(tempDir, "page");
+            RunProcess("pdftoppm", [
+                "-f", page.ToString(),
+                "-l", page.ToString(),
+                "-png", "-r", AppendixPageProbeDpi.ToString(),
+                pdf, prefix
+            ]);
+
+            var image = Directory.GetFiles(tempDir, "page-*.png").OrderBy(f => f, StringComparer.Ordinal).FirstOrDefault();
+            if (image is null)
+                yield break;
+
+            foreach (var margin in new[] { PageMargin.Footer, PageMargin.Header })
+            {
+                var stripPath = Path.Combine(tempDir, margin == PageMargin.Footer ? "footer.png" : "header.png");
+                if (!ImageMarginCrop.TryCropStrip(image, stripPath, margin))
+                    continue;
+
+                foreach (var ocr in OcrAppendixCandidates(stripPath))
+                {
+                    if (!string.IsNullOrWhiteSpace(ocr))
+                        yield return ocr;
+                }
+            }
+
+            var fullPageOcr = OcrAppendixCandidates(image).FirstOrDefault(t => !string.IsNullOrWhiteSpace(t));
+            if (string.IsNullOrWhiteSpace(fullPageOcr))
+                yield break;
+
+            var lines = fullPageOcr.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            if (lines.Length == 0)
+                yield break;
+
+            yield return lines[^1];
+            if (lines.Length > 1)
+                yield return lines[0];
+        }
+        finally
+        {
+            try { Directory.Delete(tempDir, recursive: true); }
+            catch { /* best effort */ }
+        }
+    }
+
+    private static IEnumerable<string> TryReadMarginOcrTexts(string pdfPath, int page)
+    {
+        var pdf = Path.GetFullPath(pdfPath);
+        var tempDir = Path.Combine(Path.GetTempPath(), $"mello-roos-page-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(tempDir);
+
+        try
+        {
+            var prefix = Path.Combine(tempDir, "page");
+            RunProcess("pdftoppm", [
+                "-f", page.ToString(),
+                "-l", page.ToString(),
+                "-png", "-r", PrintedPageProbeDpi.ToString(),
+                pdf, prefix
+            ]);
+
+            var image = Directory.GetFiles(tempDir, "page-*.png").OrderBy(f => f, StringComparer.Ordinal).FirstOrDefault();
+            if (image is null)
+                yield break;
+
+            foreach (var margin in new[] { PageMargin.Footer, PageMargin.Header })
+            {
+                var stripPath = Path.Combine(tempDir, margin == PageMargin.Footer ? "footer.png" : "header.png");
+                if (!ImageMarginCrop.TryCropStrip(image, stripPath, margin))
+                    continue;
+
+                var ocr = OcrMarginStrip(stripPath);
+                if (!string.IsNullOrWhiteSpace(ocr))
+                    yield return ocr;
+            }
+
+            var fullPageOcr = OcrMarginStrip(image);
+            if (string.IsNullOrWhiteSpace(fullPageOcr))
+                yield break;
+
+            var lines = fullPageOcr.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            if (lines.Length == 0)
+                yield break;
+
+            yield return string.Join('\n', lines.Take(Math.Min(4, lines.Length)));
+            if (lines.Length > 4)
+                yield return string.Join('\n', lines.TakeLast(Math.Min(6, lines.Length)));
+        }
+        finally
+        {
+            try { Directory.Delete(tempDir, recursive: true); }
+            catch { /* best effort */ }
+        }
+    }
+
+    private static IEnumerable<string> OcrAppendixCandidates(string imagePath)
+    {
+        yield return RunProcess("tesseract", [imagePath, "stdout", "-l", "eng", "--psm", "7"]).Trim();
+        yield return RunProcess("tesseract", [
+            imagePath, "stdout", "-l", "eng", "--psm", "8",
+            "-c", "tessedit_char_whitelist=ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-–—>l|"
+        ]).Trim();
+        yield return OcrMarginStrip(imagePath);
+    }
+
+    private static string OcrMarginStrip(string imagePath) =>
+        RunProcess("tesseract", [
+            imagePath, "stdout",
+            "-l", "eng",
+            "--psm", "7",
+            "-c", "tessedit_char_whitelist=ABCDEFG0123456789-–—>l."
+        ]).Trim();
+
     private static string RunPdftotext(string pdfPath, int? firstPage, int? lastPage)
     {
         var args = new List<string>();
@@ -157,11 +425,15 @@ public static class TextAcquisition
 
             var sb = new StringBuilder();
             var firstPage = options.FirstPage ?? 1;
+            var lastPage = options.LastPage ?? (firstPage + images.Count - 1);
+            Console.Error.WriteLine($"OCR pages {firstPage}-{lastPage} ({images.Count} images at {options.Dpi} DPI)...");
+
             for (var i = 0; i < images.Count; i++)
             {
                 var image = images[i];
                 var pageNum = ParsePageNumberFromImage(image, firstPage, i);
                 var pageText = RunProcess("tesseract", [image, "stdout", "-l", "eng", "--psm", options.TesseractPsm]);
+                Console.Error.WriteLine($"  page {pageNum}: {pageText.Length} chars");
                 sb.AppendLine($"<<<PAGE {pageNum}>>>");
                 sb.AppendLine(pageText);
                 sb.AppendLine();

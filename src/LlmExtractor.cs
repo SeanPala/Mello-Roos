@@ -16,6 +16,12 @@ public enum LlmProvider
 public sealed class LlmExtractor
 {
     public const string DefaultGeminiModel = "gemini-3.6-flash";
+    /// <summary>Flash model with free-tier vision quota. Use gemini-3.1-pro-preview with billing for higher quality.</summary>
+    public const string DefaultGeminiVisionModel = "gemini-2.0-flash";
+    public const string DefaultOpenAiVisionModel = "gpt-4o-mini";
+    public const string DefaultClaudeVisionModel = "claude-sonnet-4-20250514";
+
+    public const string DefaultVisionModel = DefaultGeminiVisionModel;
     public const string DefaultOpenAiModel = "gpt-4o-mini";
     public const string DefaultClaudeModel = "claude-sonnet-4-20250514";
 
@@ -100,6 +106,14 @@ public sealed class LlmExtractor
         _ => DefaultGeminiModel
     };
 
+    public static string DefaultVisionModelFor(LlmProvider provider) => provider switch
+    {
+        LlmProvider.Gemini => DefaultGeminiVisionModel,
+        LlmProvider.OpenAi => DefaultOpenAiVisionModel,
+        LlmProvider.Claude => DefaultClaudeVisionModel,
+        _ => DefaultGeminiVisionModel
+    };
+
     public static ExtractionResult LoadFromJsonFile(string path)
     {
         var json = File.ReadAllText(path);
@@ -125,6 +139,9 @@ public sealed class LlmExtractor
         var promptText = PrepareText(documentText);
         var userPrompt = $"Extract rate table data from this RMA document text:\n\n{promptText}";
 
+        Console.Error.WriteLine(
+            $"Text LLM: {provider}/{model} ({promptText.Length:N0} chars)...");
+
         var json = provider switch
         {
             LlmProvider.Gemini => await ExtractWithGeminiAsync(userPrompt, model, ct),
@@ -143,6 +160,7 @@ public sealed class LlmExtractor
             throw new InvalidOperationException("GEMINI_API_KEY (or GOOGLE_API_KEY) is required for Gemini extraction.");
 
         var content = await GeminiClient.GenerateJsonAsync(SystemPrompt, userPrompt, model, apiKey, ct);
+        Console.Error.WriteLine($"Text LLM: {model} response received ({content.Length:N0} chars).");
         return StripMarkdownFences(content);
     }
 

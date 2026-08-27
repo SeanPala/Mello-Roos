@@ -12,12 +12,16 @@ public sealed class PageOffsetResult
 
 public static class PageOffsetDetector
 {
+    private const int MinAgreeingSamples = 2;
+    private const int MaxSinglePageProbes = 10;
+
     // pdfPage = listedPage + Offset
     public static PageOffsetResult Resolve(
         string pdfPath,
         RmaLocateOptions options,
         int totalPages,
-        IReadOnlyList<TocEntry>? tocEntries = null)
+        IReadOnlyList<TocEntry>? tocEntries = null,
+        string? frontMatterOcrText = null)
     {
         if (options.PageOffset is int manual)
         {
@@ -39,9 +43,16 @@ public static class PageOffsetDetector
             };
         }
 
-        var fromPrinted = DetectFromPrintedNumbers(pdfPath, options, totalPages);
-        if (fromPrinted is not null)
-            return fromPrinted;
+        var samples = CollectSamplesFromText(frontMatterOcrText, totalPages);
+        if (TryResolveOffset(samples, totalPages, out var fromReuse))
+        {
+            return new PageOffsetResult
+            {
+                Offset = fromReuse.Offset,
+                Method = "auto-printed",
+                Notes = FormatNotes(fromReuse.Offset, samples, fromReuse: true)
+            };
+        }
 
         if (tocEntries is { Count: > 0 })
         {
@@ -49,6 +60,14 @@ public static class PageOffsetDetector
             if (fromToc is not null)
                 return fromToc;
         }
+
+        var probeStart = frontMatterOcrText is not null
+            ? Math.Min(totalPages, options.TocLastPage + 1)
+            : Math.Min(totalPages, 10);
+
+        var fromPrinted = DetectFromPrintedNumbers(pdfPath, options, totalPages, samples, probeStart);
+        if (fromPrinted is not null)
+            return fromPrinted;
 
         return new PageOffsetResult
         {
@@ -63,53 +82,119 @@ public static class PageOffsetDetector
     public static bool IsValidPdfRange(int pdfStart, int pdfEnd, int totalPages) =>
         pdfStart >= 1 && pdfEnd >= pdfStart && pdfStart <= totalPages;
 
-    private static PageOffsetResult? DetectFromPrintedNumbers(string pdfPath, RmaLocateOptions options, int totalPages)
+    private static PageOffsetResult? DetectFromPrintedNumbers(
+        string pdfPath,
+        RmaLocateOptions options,
+        int totalPages,
+        List<(int PdfPage, int PrintedPage)> samples,
+        int probeStart)
     {
-        var scanLast = Math.Min(totalPages, Math.Max(options.TocLastPage + 15, 50));
-        Console.Error.WriteLine($"Detecting page offset from printed numbers (PDF pages 1-{scanLast}, batch OCR)...");
+        var probePages = BuildProbeSchedule(probeStart, totalPages, MaxSinglePageProbes)
+            .Where(p => samples.All(s => s.PdfPage != p))
+            .ToList();
 
-        var batch = TextAcquisition.Acquire(pdfPath, new TextAcquisitionOptions
-        {
-            ForceOcr = options.ForceOcr,
-            FirstPage = 1,
-            LastPage = scanLast,
-            Dpi = options.Dpi,
-            TesseractPsm = options.TesseractPsm
-        });
-
-        var pages = TextAcquisition.SplitMarkedPages(batch.Text, 1);
-        var samples = new List<(int pdfPage, int printedPage)>();
-
-        foreach (var page in pages)
-        {
-            var printed = TryExtractPrintedArabicPage(page.Text);
-            if (printed is int n && TocParser.IsValidListedPage(n, totalPages))
-                samples.Add((page.PageNumber, n));
-        }
-
-        if (samples.Count == 0)
+        if (probePages.Count == 0)
             return null;
 
+        Console.Error.WriteLine(
+            $"Detecting page offset from printed numbers ({probePages.Count} margin-strip probes, starting PDF p.{probePages[0]})...");
+
+        foreach (var page in probePages)
+        {
+            if (TextAcquisition.TryReadPrintedPageNumber(pdfPath, page, new TextAcquisitionOptions
+                {
+                    ForceOcr = options.ForceOcr,
+                    Dpi = options.Dpi,
+                    TesseractPsm = options.TesseractPsm
+                }) is int printed
+                && TocParser.IsValidListedPage(printed, totalPages))
+            {
+                samples.Add((page, printed));
+            }
+
+            if (TryResolveOffset(samples, totalPages, out var resolved))
+            {
+                return new PageOffsetResult
+                {
+                    Offset = resolved.Offset,
+                    Method = "auto-printed",
+                    Notes = FormatNotes(resolved.Offset, samples, fromReuse: false)
+                };
+            }
+        }
+
+        return null;
+    }
+
+    private static List<(int PdfPage, int PrintedPage)> CollectSamplesFromText(string? text, int totalPages)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+            return [];
+
+        return TextAcquisition.SplitMarkedPages(text, 1)
+            .Select(page =>
+            {
+                var printed = TryExtractPrintedArabicPage(page.Text);
+                return printed is int n && TocParser.IsValidListedPage(n, totalPages)
+                    ? ((int PdfPage, int PrintedPage)?)(page.PageNumber, n)
+                    : null;
+            })
+            .Where(s => s is not null)
+            .Select(s => s!.Value)
+            .ToList();
+    }
+
+    private static List<int> BuildProbeSchedule(int start, int totalPages, int maxProbes)
+    {
+        var pages = new List<int>();
+        var page = Math.Clamp(start, 1, totalPages);
+        var step = 2;
+
+        while (pages.Count < maxProbes && page <= totalPages)
+        {
+            pages.Add(page);
+            page += step;
+            if (pages.Count == 4)
+                step = 3;
+        }
+
+        return pages;
+    }
+
+    private static bool TryResolveOffset(
+        IReadOnlyList<(int PdfPage, int PrintedPage)> samples,
+        int totalPages,
+        out PageOffsetResult result)
+    {
+        result = null!;
+
+        if (samples.Count < MinAgreeingSamples)
+            return false;
+
         var offsets = samples
-            .Select(s => s.pdfPage - s.printedPage)
+            .Select(s => s.PdfPage - s.PrintedPage)
             .Where(o => o >= 0 && o < totalPages)
             .GroupBy(o => o)
             .OrderByDescending(g => g.Count())
             .ThenByDescending(g => g.Key)
             .FirstOrDefault();
 
-        if (offsets is null)
-            return null;
+        if (offsets is null || offsets.Count() < MinAgreeingSamples)
+            return false;
 
-        var offset = offsets.Key;
-        var anchor = samples.First(s => s.pdfPage - s.printedPage == offset);
+        result = new PageOffsetResult { Offset = offsets.Key, Method = "auto-printed" };
+        return true;
+    }
 
-        return new PageOffsetResult
-        {
-            Offset = offset,
-            Method = "auto-printed",
-            Notes = $"Detected offset {offset}: PDF page {anchor.pdfPage} shows printed page {anchor.printedPage} ({samples.Count} samples, {offsets.Count()} agree)."
-        };
+    private static string FormatNotes(int offset, IReadOnlyList<(int PdfPage, int PrintedPage)> samples, bool fromReuse)
+    {
+        var agreeing = samples.Where(s => s.PdfPage - s.PrintedPage == offset).ToList();
+        var anchor = agreeing[0];
+        var source = fromReuse && agreeing.Count >= MinAgreeingSamples
+            ? "reused front-matter OCR"
+            : $"{samples.Count} probe sample(s)";
+        return
+            $"Detected offset {offset}: PDF page {anchor.PdfPage} shows printed page {anchor.PrintedPage} ({source}, {agreeing.Count} agree).";
     }
 
     private static PageOffsetResult? DetectFromTocRoman(IReadOnlyList<TocEntry> entries, int totalPages)

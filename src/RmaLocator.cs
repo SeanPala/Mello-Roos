@@ -3,6 +3,16 @@ using MelloRoos.Models;
 
 namespace MelloRoos;
 
+public sealed class TocScanContext
+{
+    public required string Text { get; init; }
+    public required List<TocEntry> Entries { get; init; }
+    public required PageOffsetResult Offset { get; init; }
+    public TocEntry? RmaEntry { get; init; }
+    public string? AppendixTitle { get; init; }
+    public bool UsesAppendixPageRef { get; init; }
+}
+
 public static class RmaLocator
 {
     private static readonly Regex RmaHeaderPattern = new(
@@ -15,15 +25,65 @@ public static class RmaLocator
         var totalPages = TextAcquisition.GetPageCount(pdfPath)
             ?? throw new InvalidOperationException("Could not determine PDF page count (pdfinfo required).");
 
-        var tocResult = TryLocateFromToc(pdfPath, options, totalPages);
-        if (tocResult is not null)
-            return tocResult;
+        var toc = TryScanToc(pdfPath, options, totalPages);
+        if (toc is not null)
+        {
+            if (toc.RmaEntry is not null && !toc.UsesAppendixPageRef)
+            {
+                var tocResult = BuildTocResult(toc.RmaEntry, toc.Entries, options, totalPages, toc.Offset, "toc");
+                if (tocResult is not null && ValidateDiscoveredRange(pdfPath, options, tocResult.StartPage, tocResult.EndPage))
+                    return tocResult;
 
-        Console.Error.WriteLine("TOC locate failed; falling back to chunked keyword scan.");
-        return LocateByKeywordScan(pdfPath, options, totalPages);
+                Console.Error.WriteLine(
+                    tocResult is null
+                        ? "TOC listed page invalid; searching by body-text scan..."
+                        : $"TOC+offset pages {tocResult.StartPage}-{tocResult.EndPage} failed validation; searching by body-text scan...");
+
+                var refineLo = tocResult?.StartPage is int s ? Math.Max(1, s - 30) : 1;
+                var refineHi = tocResult?.EndPage is int e ? Math.Min(totalPages, e + 50) : totalPages;
+                return BuildFromSectionSearch(
+                    pdfPath, options, totalPages, refineLo, refineHi,
+                    TocParser.ExtractAppendixLetter(toc.RmaEntry.Title),
+                    toc.RmaEntry.Title, toc.Offset,
+                    method: "toc-refine");
+            }
+
+            if (toc.AppendixTitle is not null)
+            {
+                var letter = TocParser.ExtractAppendixLetter(toc.AppendixTitle)
+                    ?? throw new InvalidOperationException("TOC appendix title has no letter.");
+
+                var (lo, hi) = RmaSectionSearch.BoundsFromTocBracket(
+                    toc.Entries, toc.AppendixTitle, toc.Offset.Offset, totalPages);
+
+                Console.Error.WriteLine(
+                    $"TOC lists RMA appendix ({Truncate(toc.AppendixTitle, 70)}) with appendix page ref (e.g. {letter}-1); locating by body-text scan...");
+
+                return BuildFromSectionSearch(
+                    pdfPath, options, totalPages, lo, hi, letter,
+                    toc.AppendixTitle, toc.Offset,
+                    method: "appendix-content");
+            }
+        }
+
+        return BuildKeywordScanFallback(pdfPath, options, totalPages);
     }
 
-    private static RmaLocateResult? TryLocateFromToc(string pdfPath, RmaLocateOptions options, int totalPages)
+    private static RmaLocateResult BuildKeywordScanFallback(
+        string pdfPath,
+        RmaLocateOptions options,
+        int totalPages)
+    {
+        Console.Error.WriteLine("No usable TOC; scanning full document for RMA keywords...");
+        return BuildFromSectionSearch(
+            pdfPath, options, totalPages,
+            1, totalPages,
+            appendixLetter: null,
+            tocEntry: null, offset: PageOffsetDetector.Resolve(pdfPath, options, totalPages),
+            method: "keyword-scan");
+    }
+
+    private static TocScanContext? TryScanToc(string pdfPath, RmaLocateOptions options, int totalPages)
     {
         var tocLast = Math.Min(options.TocLastPage, totalPages);
         if (tocLast < options.TocFirstPage)
@@ -38,46 +98,142 @@ public static class RmaLocator
             LastPage = tocLast,
             Dpi = options.Dpi,
             TesseractPsm = options.TesseractPsm
-        });
+        }, options.PageCache);
 
         if (!TocParser.LooksLikeTableOfContents(tocText.Text, options.TocLoose))
         {
             Console.Error.WriteLine("No table of contents detected in front matter.");
-            if (!options.TocLoose)
-                Console.Error.WriteLine("Tip: try --toc-loose to accept index-style TOCs and fuzzy matching.");
             return null;
         }
 
         var entries = TocParser.Parse(tocText.Text, options.TocLoose, totalPages);
-        if (entries.Count == 0)
-        {
-            Console.Error.WriteLine("Table of contents found but no parseable entries.");
-            if (options.TocLoose)
-            {
-                var rawHit = TocParser.FindRmaInRawText(tocText.Text, minScore: options.TocMinScore, totalPages);
-                if (rawHit is not null && IsValidTocHit(rawHit, totalPages))
-                    return BuildTocResult(rawHit, entries, options, totalPages, pdfPath, "toc-raw");
-            }
-            return null;
-        }
+        var offset = PageOffsetDetector.Resolve(pdfPath, options, totalPages, entries, tocText.Text);
+        Console.Error.WriteLine(offset.Notes);
 
-        var minScore = options.TocLoose ? Math.Min(options.TocMinScore, 35) : options.TocMinScore;
+        var minScore = options.TocLoose ? Math.Min(options.TocMinScore, 15) : options.TocMinScore;
         var rmaEntry = TocParser.FindBestRmaEntry(entries, minScore, totalPages);
         if (rmaEntry is null && options.TocLoose)
             rmaEntry = TocParser.FindRmaInRawText(tocText.Text, minScore: minScore, totalPages);
 
-        if (rmaEntry is null || rmaEntry.Score < minScore || !IsValidTocHit(rmaEntry, totalPages))
+        var appendixTitle = TocParser.FindRmaAppendixTitle(tocText.Text);
+        var usesAppendixRef = appendixTitle is not null && RmaEntryUsesAppendixPageRef(tocText.Text, appendixTitle);
+
+        if (rmaEntry is not null && IsValidTocHit(rmaEntry, totalPages, minScore))
         {
-            Console.Error.WriteLine($"Table of contents found but no RMA entry matched (min score {minScore}).");
-            Console.Error.WriteLine($"Parsed {entries.Count} TOC entries (top matches):");
-            foreach (var entry in entries.OrderByDescending(e => TocParser.ScoreTitle(e.Title)).Take(12))
-                Console.Error.WriteLine($"  listed p.{entry.PageNumber,3} (score {TocParser.ScoreTitle(entry.Title),3}): {Truncate(entry.Title, 80)}");
-            if (!options.TocLoose)
-                Console.Error.WriteLine("Tip: try --toc-loose or lower --toc-min-score.");
-            return null;
+            return new TocScanContext
+            {
+                Text = tocText.Text,
+                Entries = entries,
+                Offset = offset,
+                RmaEntry = rmaEntry,
+                AppendixTitle = appendixTitle,
+                UsesAppendixPageRef = usesAppendixRef
+            };
         }
 
-        return BuildTocResult(rmaEntry, entries, options, totalPages, pdfPath, "toc");
+        if (appendixTitle is not null)
+        {
+            return new TocScanContext
+            {
+                Text = tocText.Text,
+                Entries = entries,
+                Offset = offset,
+                RmaEntry = null,
+                AppendixTitle = appendixTitle,
+                UsesAppendixPageRef = true
+            };
+        }
+
+        if (entries.Count > 0)
+        {
+            Console.Error.WriteLine($"Table of contents found but no RMA entry matched (min score {minScore}).");
+            foreach (var entry in entries.OrderByDescending(e => TocParser.ScoreTitle(e.Title)).Take(8))
+                Console.Error.WriteLine($"  listed p.{entry.PageNumber,3}: {Truncate(entry.Title, 80)}");
+        }
+
+        return null;
+    }
+
+    private static bool RmaEntryUsesAppendixPageRef(string tocText, string appendixTitle)
+    {
+        var idx = tocText.IndexOf(appendixTitle, StringComparison.OrdinalIgnoreCase);
+        if (idx < 0)
+            return TocParser.ContainsRmaAppendixTitle(tocText);
+
+        var tail = tocText[(idx + appendixTitle.Length)..];
+        var lineEnd = tail.IndexOf('\n');
+        if (lineEnd > 0)
+            tail = tail[..lineEnd];
+
+        return TocParser.HasAppendixPageRef(tail);
+    }
+
+    private static RmaLocateResult BuildFromSectionSearch(
+        string pdfPath,
+        RmaLocateOptions options,
+        int totalPages,
+        int searchLow,
+        int searchHigh,
+        string? appendixLetter,
+        string? tocEntry,
+        PageOffsetResult offset,
+        string method)
+    {
+        try
+        {
+            var (start, end) = RmaSectionSearch.FindSectionBounds(
+                pdfPath, options, totalPages, searchLow, searchHigh, appendixLetter, tocEntry);
+
+            var listedStart = offset.Offset > 0 ? start - offset.Offset : (int?)null;
+            var listedEnd = offset.Offset > 0 ? end - offset.Offset : (int?)null;
+
+            return BuildResult(
+                method: method,
+                startPage: start,
+                endPage: end,
+                totalPages: totalPages,
+                padding: options.Padding,
+                listedStart: listedStart,
+                listedEnd: listedEnd,
+                pageOffset: offset.Offset,
+                pageOffsetMethod: offset.Method,
+                tocEntry: tocEntry,
+                notes: appendixLetter is not null
+                    ? $"Appendix {appendixLetter} located at PDF pages {start}-{end} (searched {searchLow}-{searchHigh})."
+                    : $"RMA section located at PDF pages {start}-{end} (searched {searchLow}-{searchHigh}).");
+        }
+        catch (InvalidOperationException)
+        {
+            var backThird = RmaSectionSearch.DefaultAppendixSearchLow(totalPages);
+
+            if (method.Contains("-full", StringComparison.Ordinal) && method != "keyword-scan")
+                throw;
+
+            // keyword-scan already searches the full document
+            if (method == "keyword-scan" || method.StartsWith("keyword-scan-", StringComparison.Ordinal))
+                throw;
+
+            if (!method.Contains("-expanded", StringComparison.Ordinal)
+                && (searchLow > backThird || searchHigh < totalPages))
+            {
+                Console.Error.WriteLine(
+                    $"Section search failed in PDF {searchLow}-{searchHigh}; expanding to back third ({backThird}-{totalPages})...");
+                return BuildFromSectionSearch(
+                    pdfPath, options, totalPages, backThird, totalPages,
+                    appendixLetter, tocEntry, offset, method: method + "-expanded");
+            }
+
+            if (searchLow > 1)
+            {
+                Console.Error.WriteLine(
+                    $"Section search failed in back third; scanning full document (1-{totalPages})...");
+                return BuildFromSectionSearch(
+                    pdfPath, options, totalPages, 1, totalPages,
+                    appendixLetter, tocEntry, offset, method: method + "-full");
+            }
+
+            throw;
+        }
     }
 
     private static RmaLocateResult? BuildTocResult(
@@ -85,7 +241,7 @@ public static class RmaLocator
         IReadOnlyList<TocEntry> entries,
         RmaLocateOptions options,
         int totalPages,
-        string pdfPath,
+        PageOffsetResult offsetResult,
         string method)
     {
         var listedStart = rmaEntry.PageNumber;
@@ -94,23 +250,22 @@ public static class RmaLocator
 
         if (!TocParser.IsValidListedRange(listedStart, listedEnd, totalPages))
         {
-            Console.Error.WriteLine($"Rejected TOC result: invalid listed range {listedStart}-{listedEnd} (PDF has {totalPages} pages).");
+            Console.Error.WriteLine($"Rejected TOC result: invalid listed range {listedStart}-{listedEnd}.");
             return null;
         }
-
-        var offsetResult = PageOffsetDetector.Resolve(pdfPath, options, totalPages, entries);
-        Console.Error.WriteLine(offsetResult.Notes);
 
         var pdfStart = PageOffsetDetector.ToPdfPage(listedStart, offsetResult.Offset);
         var pdfEnd = PageOffsetDetector.ToPdfPage(listedEnd, offsetResult.Offset);
 
         if (!PageOffsetDetector.IsValidPdfRange(pdfStart, pdfEnd, totalPages))
         {
-            Console.Error.WriteLine($"Rejected TOC result: invalid PDF range {pdfStart}-{pdfEnd} (listed {listedStart}-{listedEnd}, offset {offsetResult.Offset}, PDF pages {totalPages}).");
+            Console.Error.WriteLine(
+                $"Rejected TOC result: invalid PDF range {pdfStart}-{pdfEnd} (listed {listedStart}-{listedEnd}, offset {offsetResult.Offset}).");
             return null;
         }
 
-        var notes = $"TOC listed pages {listedStart}-{listedEnd}; offset {offsetResult.Offset} → PDF pages {pdfStart}-{pdfEnd}. {Truncate(rmaEntry.Title, 100)} (score {rmaEntry.Score}).";
+        var notes =
+            $"TOC listed pages {listedStart}-{listedEnd}; offset {offsetResult.Offset} → PDF pages {pdfStart}-{pdfEnd}. {Truncate(rmaEntry.Title, 100)}.";
 
         return BuildResult(
             method: method,
@@ -126,32 +281,16 @@ public static class RmaLocator
             notes: notes);
     }
 
-    private static bool IsValidTocHit(TocEntry entry, int totalPages)
+    private static bool IsValidTocHit(TocEntry entry, int totalPages, int minScore = 35)
     {
         if (!TocParser.IsValidListedPage(entry.PageNumber, totalPages, entry.Title))
-        {
-            Console.Error.WriteLine($"Rejected TOC hit: invalid listed page {entry.PageNumber}.");
             return false;
-        }
-
         if (!TocParser.LooksLikeRmaTocTitle(entry.Title))
-        {
-            Console.Error.WriteLine($"Rejected TOC hit: not an RMA section title ({Truncate(entry.Title, 60)}).");
             return false;
-        }
-
-        if (entry.Score < 35)
-        {
-            Console.Error.WriteLine($"Rejected TOC hit: score {entry.Score} below minimum 35.");
+        if (entry.Score < minScore)
             return false;
-        }
-
-        if (entry.Title.Length > 160 || (entry.Title.Contains("APPENDIX C", StringComparison.OrdinalIgnoreCase)
-            && entry.Title.Contains("APPENDIX D", StringComparison.OrdinalIgnoreCase)))
-        {
-            Console.Error.WriteLine("Rejected TOC hit: garbled/multi-appendix OCR blob.");
+        if (entry.Title.Length > 160)
             return false;
-        }
 
         return true;
     }
@@ -159,96 +298,33 @@ public static class RmaLocator
     private static string Truncate(string value, int max) =>
         value.Length <= max ? value : value[..max] + "...";
 
-    private static RmaLocateResult LocateByKeywordScan(string pdfPath, RmaLocateOptions options, int totalPages)
+    private const int MinValidationScore = 60;
+
+    private static bool ValidateDiscoveredRange(
+        string pdfPath,
+        RmaLocateOptions options,
+        int startPage,
+        int endPage)
     {
-        var bestChunkStart = 0;
-        var bestChunkScore = 0;
-        string? bestChunkText = null;
-        var chunkSize = Math.Max(10, options.ChunkSize);
+        var sampleEnd = Math.Min(endPage, startPage + 5);
+        Console.Error.WriteLine($"Validating TOC+offset range: OCR pages {startPage}-{sampleEnd}...");
 
-        for (var chunkStart = 1; chunkStart <= totalPages; chunkStart += chunkSize)
+        var sample = TextAcquisition.Acquire(pdfPath, new TextAcquisitionOptions
         {
-            var chunkEnd = Math.Min(chunkStart + chunkSize - 1, totalPages);
-            Console.Error.WriteLine($"Scanning chunk pages {chunkStart}-{chunkEnd}...");
+            ForceOcr = options.ForceOcr,
+            FirstPage = startPage,
+            LastPage = sampleEnd,
+            Dpi = options.Dpi,
+            TesseractPsm = options.TesseractPsm
+        }, options.PageCache);
 
-            var chunkText = TextAcquisition.Acquire(pdfPath, new TextAcquisitionOptions
-            {
-                ForceOcr = options.ForceOcr,
-                FirstPage = chunkStart,
-                LastPage = chunkEnd,
-                Dpi = options.Dpi,
-                TesseractPsm = options.TesseractPsm
-            });
+        var score = ScoreRmaContent(sample.Text);
+        var hasHeader = RmaHeaderPattern.IsMatch(sample.Text);
+        var hasTable = Regex.IsMatch(sample.Text, @"(?i)\btable\s+1\b");
 
-            var score = ScoreRmaContent(chunkText.Text);
-            Console.Error.WriteLine($"  chunk score: {score}, {chunkText.CharCount} chars");
+        Console.Error.WriteLine($"  validation score: {score}, rma_header: {hasHeader}, table_1: {hasTable}");
 
-            if (score > bestChunkScore)
-            {
-                bestChunkScore = score;
-                bestChunkStart = chunkStart;
-                bestChunkText = chunkText.Text;
-            }
-
-            // Only stop early on a strong RMA header hit, not bond preamble "special tax" language
-            if (score >= 120 && RmaHeaderPattern.IsMatch(chunkText.Text) && chunkStart > 30)
-                break;
-        }
-
-        if (bestChunkScore < 40 || bestChunkText is null)
-        {
-            throw new InvalidOperationException(
-                "Could not locate Mello-Roos RMA section. Try widening --toc-pages, adjusting --chunk-size, or locating pages manually.");
-        }
-
-        var refineStart = bestChunkStart;
-        var refineEnd = Math.Min(bestChunkStart + chunkSize - 1, totalPages);
-        var pages = TextAcquisition.SplitMarkedPages(bestChunkText, refineStart);
-        Console.Error.WriteLine($"Refining within cached chunk pages {refineStart}-{refineEnd}...");
-
-        var startPage = pages
-            .Where(p => ScoreRmaContent(p.Text) >= 50)
-            .OrderBy(p => p.PageNumber)
-            .Select(p => p.PageNumber)
-            .FirstOrDefault();
-
-        if (startPage == 0)
-        {
-            startPage = pages
-                .OrderByDescending(p => ScoreRmaContent(p.Text))
-                .Select(p => p.PageNumber)
-                .FirstOrDefault(refineStart);
-        }
-
-        var endPage = startPage;
-        foreach (var page in pages.Where(p => p.PageNumber >= startPage).OrderBy(p => p.PageNumber))
-        {
-            if (page.PageNumber - startPage >= options.MaxSpan)
-                break;
-
-            if (Regex.IsMatch(page.Text, @"(?i)^exhibit\s+[a-z0-9\-]+", RegexOptions.Multiline))
-                break;
-
-            endPage = page.PageNumber;
-
-            if (page.PageNumber > startPage + 3 && ScoreRmaContent(page.Text) < 10)
-                break;
-        }
-
-        endPage = Math.Min(totalPages, Math.Max(endPage, startPage + 4));
-
-        return BuildResult(
-            method: "keyword-scan",
-            startPage: startPage,
-            endPage: endPage,
-            totalPages: totalPages,
-            padding: options.Padding,
-            listedStart: null,
-            listedEnd: null,
-            pageOffset: 0,
-            pageOffsetMethod: "n/a",
-            tocEntry: null,
-            notes: $"Chunk scan hit pages {refineStart}-{refineEnd} (score {bestChunkScore}); refined to PDF pages {startPage}-{endPage}.");
+        return score >= MinValidationScore && (hasHeader || hasTable);
     }
 
     internal static int ScoreRmaContent(string text)

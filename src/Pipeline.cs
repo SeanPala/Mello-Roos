@@ -20,7 +20,15 @@ public sealed class PipelineOptions
     public string TesseractPsm { get; init; } = TextAcquisition.DefaultPsm;
     public LlmProvider LlmProvider { get; init; } = LlmProvider.Gemini;
     public string LlmModel { get; init; } = LlmExtractor.DefaultGeminiModel;
+    public LlmProvider VisionProvider { get; init; } = LlmProvider.Gemini;
+    public string VisionModel { get; init; } = LlmExtractor.DefaultGeminiVisionModel;
     public int LandUseType { get; init; }
+    public bool VisionTable { get; init; }
+    public string? TablePages { get; init; }
+    public int TableDpi { get; init; } = PdfPageImages.TableDpi;
+    public bool LlamaParseFallback { get; init; }
+    public bool TextractFallback { get; init; }
+    public bool AutoLocate { get; init; } = true;
 }
 
 public sealed class PipelineResult
@@ -30,6 +38,7 @@ public sealed class PipelineResult
     public required List<EscalatedRateClass> Escalated { get; init; }
     public required string Sql { get; init; }
     public required bool ReviewRequired { get; init; }
+    public RmaDiscoveryResult? Discovery { get; init; }
 }
 
 public static class Pipeline
@@ -40,8 +49,7 @@ public static class Pipeline
     {
         TextAcquisitionResult? textResult = null;
         ExtractionResult extraction;
-
-        var extractor = new LlmExtractor();
+        RmaDiscoveryResult? discovery = null;
 
         if (!string.IsNullOrWhiteSpace(options.JsonPath))
         {
@@ -49,19 +57,38 @@ public static class Pipeline
         }
         else
         {
-            textResult = TextAcquisition.Acquire(options.PdfPath, new TextAcquisitionOptions
+            var pageCount = TextAcquisition.GetPageCount(options.PdfPath);
+            var isLargeDoc = pageCount is int total && total > TextAcquisition.LargePdfPageThreshold;
+            var useLargeDocPath = isLargeDoc
+                && options.FirstPage is null
+                && options.LastPage is null
+                && options.AutoLocate;
+
+            if (useLargeDocPath)
             {
-                ForceOcr = options.ForceOcr,
-                FirstPage = options.FirstPage,
-                LastPage = options.LastPage,
-                Dpi = options.Dpi,
-                TesseractPsm = options.TesseractPsm
-            });
+                (discovery, textResult, extraction) = await LargeDocumentPipeline.ExtractAsync(options, ct);
+            }
+            else
+            {
+                textResult = TextAcquisition.Acquire(options.PdfPath, new TextAcquisitionOptions
+                {
+                    ForceOcr = options.ForceOcr,
+                    FirstPage = options.FirstPage,
+                    LastPage = options.LastPage,
+                    Dpi = options.Dpi,
+                    TesseractPsm = options.TesseractPsm
+                });
 
-            if (!string.IsNullOrWhiteSpace(options.SaveTextPath))
-                await File.WriteAllTextAsync(options.SaveTextPath!, textResult.Text, ct);
+                if (!string.IsNullOrWhiteSpace(options.SaveTextPath))
+                    await File.WriteAllTextAsync(options.SaveTextPath!, textResult.Text, ct);
 
-            extraction = await extractor.ExtractAsync(textResult.Text, options.LlmProvider, options.LlmModel, ct);
+                var extractor = new LlmExtractor();
+                extraction = await extractor.ExtractAsync(
+                    textResult.Text, options.LlmProvider, options.LlmModel, ct);
+
+                if (options.VisionTable || (isLargeDoc && options.AutoLocate))
+                    await RunVisionTableMergeAsync(options, extraction, textResult, null, ct);
+            }
         }
 
         if (!string.IsNullOrWhiteSpace(options.SaveJsonPath))
@@ -79,7 +106,8 @@ public static class Pipeline
                 Extraction = extraction,
                 Escalated = [],
                 Sql = "",
-                ReviewRequired = true
+                ReviewRequired = true,
+                Discovery = discovery
             };
         }
 
@@ -95,8 +123,48 @@ public static class Pipeline
             Extraction = extraction,
             Escalated = escalated,
             Sql = sql,
-            ReviewRequired = false
+            ReviewRequired = false,
+            Discovery = discovery
         };
+    }
+
+    private static async Task RunVisionTableMergeAsync(
+        PipelineOptions options,
+        ExtractionResult extraction,
+        TextAcquisitionResult textResult,
+        RmaDiscoveryResult? discovery,
+        CancellationToken ct)
+    {
+        var tablePages = TableExtractionService.ResolveTablePages(
+            options.TablePages,
+            options.FirstPage ?? discovery?.ExtractFirst,
+            options.LastPage ?? discovery?.ExtractLast,
+            textResult.Text);
+
+        if (tablePages is null)
+        {
+            extraction.Flags.Add("table_pages_not_specified");
+            Console.Error.WriteLine("Warning: vision table enabled but Table 1 page window unknown.");
+            return;
+        }
+
+        var (tableFirst, tableLast) = tablePages.Value;
+        var tableResult = await TableExtractionService.ExtractAsync(new TableExtractionOptions
+        {
+            PdfPath = options.PdfPath,
+            FirstPage = tableFirst,
+            LastPage = tableLast,
+            Dpi = options.TableDpi,
+            VisionProvider = options.VisionProvider,
+            Model = options.VisionModel,
+            UseVision = true,
+            UseLlamaParse = options.LlamaParseFallback,
+            UseTextract = options.TextractFallback,
+            SupplementalText = textResult.Text
+        }, ct);
+
+        RateClassMerger.Merge(extraction, tableResult);
+        Console.Error.WriteLine($"Table merge: method={tableResult.Method}, classes={tableResult.RateClasses.Count}");
     }
 
     public static bool NeedsReview(ExtractionResult extraction)
