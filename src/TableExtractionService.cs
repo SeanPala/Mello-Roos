@@ -11,12 +11,13 @@ public sealed class TableExtractionOptions
     public required int FirstPage { get; init; }
     public required int LastPage { get; init; }
     public int Dpi { get; init; } = PdfPageImages.TableDpi;
-    public LlmProvider VisionProvider { get; init; } = LlmProvider.Gemini;
-    public string Model { get; init; } = LlmExtractor.DefaultGeminiVisionModel;
+    public LlmProvider VisionProvider { get; init; } = LlmExtractor.DefaultProvider;
+    public string Model { get; init; } = LlmExtractor.DefaultOpenAiVisionModel;
     public bool UseVision { get; init; } = true;
-    public bool UseLlamaParse { get; init; }
+    public bool UseLlamaParse { get; init; } = true;
     public bool UseTextract { get; init; }
     public string? SupplementalText { get; init; }
+    public string? SaveMarkdownPath { get; init; }
 }
 
 public sealed record TableExtractionResult
@@ -57,7 +58,9 @@ public static class RateClassMerger
         extraction.Flags.RemoveAll(f =>
             f.StartsWith("table_", StringComparison.OrdinalIgnoreCase)
             || f.Contains("ocr_garbled", StringComparison.OrdinalIgnoreCase)
-            || f.Contains("missing_classes", StringComparison.OrdinalIgnoreCase));
+            || f.Contains("missing_classes", StringComparison.OrdinalIgnoreCase)
+            || f.Contains("omitted in document source", StringComparison.OrdinalIgnoreCase)
+            || f.Contains("Table 1 OCR", StringComparison.OrdinalIgnoreCase));
 
         foreach (var flag in tableResult.Flags)
         {
@@ -81,6 +84,8 @@ public static class RateClassMerger
 
 public static class TableExtractionService
 {
+    private const int TableWindowPadding = 2;
+
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
         PropertyNameCaseInsensitive = true,
@@ -93,54 +98,101 @@ public static class TableExtractionService
         CancellationToken ct = default)
     {
         TableExtractionResult? result = null;
+        string? parsedMarkdown = null;
 
         if (options.UseVision)
         {
             var providerLabel = VisionLlmClient.ProviderLabel(options.VisionProvider);
             Console.Error.WriteLine(
                 $"Table extract: {providerLabel} vision on pages {options.FirstPage}-{options.LastPage} at {options.Dpi} DPI...");
-            result = await ExtractWithVisionAsync(options, ct);
-            if (IsComplete(result))
+            try
             {
-                Console.Error.WriteLine($"Table extract: vision OK ({result.RateClasses.Count} classes, method={result.Method}).");
-                return result;
-            }
+                result = await ExtractWithVisionAsync(options, ct);
+                if (IsComplete(result))
+                {
+                    Console.Error.WriteLine($"Table extract: vision OK ({result.RateClasses.Count} classes, method={result.Method}).");
+                    return result;
+                }
 
-            Console.Error.WriteLine($"Table extract: vision incomplete ({MissingRateSummary(result)}).");
+                Console.Error.WriteLine($"Table extract: vision incomplete ({MissingRateSummary(result)}).");
+            }
+            catch (Exception ex) when (ShouldFallbackFromVision(options, ex))
+            {
+                Console.Error.WriteLine($"Table extract: vision failed ({SummarizeError(ex)}); trying fallback...");
+            }
         }
 
-        if (options.UseLlamaParse)
+        if (options.UseLlamaParse && LlamaParseClient.IsConfigured())
         {
             Console.Error.WriteLine("Table extract: trying LlamaParse...");
-            var llamaparse = await ExtractWithLlamaParseAsync(options, ct);
-            result = MergeAttempts(result, llamaparse);
-            if (IsComplete(result))
+            try
             {
-                Console.Error.WriteLine($"Table extract: LlamaParse OK ({result.RateClasses.Count} classes).");
-                return result;
-            }
+                var (llamaparse, markdown) = await ExtractWithLlamaParseAsync(options, ct);
+                parsedMarkdown = markdown;
+                result = MergeAttempts(result, llamaparse);
+                if (IsComplete(result))
+                {
+                    Console.Error.WriteLine($"Table extract: LlamaParse OK ({result.RateClasses.Count} classes).");
+                    return result;
+                }
 
-            Console.Error.WriteLine($"Table extract: LlamaParse incomplete ({MissingRateSummary(result)}).");
+                Console.Error.WriteLine($"Table extract: LlamaParse incomplete ({MissingRateSummary(result)}).");
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"Table extract: LlamaParse failed ({SummarizeError(ex)}); continuing...");
+            }
+        }
+        else if (options.UseLlamaParse)
+        {
+            Console.Error.WriteLine("Table extract: LlamaParse skipped (LLAMA_CLOUD_API_KEY not set).");
         }
 
         if (options.UseTextract)
         {
             Console.Error.WriteLine("Table extract: trying AWS Textract...");
-            var textract = await ExtractWithTextractAsync(options, ct);
-            result = MergeAttempts(result, textract);
-            if (IsComplete(result))
-                Console.Error.WriteLine($"Table extract: Textract OK ({result.RateClasses.Count} classes).");
-            else
-                Console.Error.WriteLine($"Table extract: still incomplete ({MissingRateSummary(result)}).");
+            try
+            {
+                var textract = await ExtractWithTextractAsync(options, ct);
+                result = MergeAttempts(result, textract);
+                if (IsComplete(result))
+                    Console.Error.WriteLine($"Table extract: Textract OK ({result.RateClasses.Count} classes).");
+                else
+                    Console.Error.WriteLine($"Table extract: still incomplete ({MissingRateSummary(result)}).");
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"Table extract: Textract failed ({SummarizeError(ex)}).");
+            }
         }
 
-        return result ?? new TableExtractionResult
-        {
-            RateClasses = [],
-            Method = "none",
-            ExtractionConfidence = "low",
-            Flags = ["table_extraction_failed"]
-        };
+        return FinalizeResult(result, options, parsedMarkdown);
+    }
+
+    private static TableExtractionResult FinalizeResult(
+        TableExtractionResult? result,
+        TableExtractionOptions options,
+        string? parsedMarkdown = null)
+    {
+        if (result is null)
+            return new TableExtractionResult
+            {
+                RateClasses = [],
+                Method = "none",
+                ExtractionConfidence = "low",
+                Flags = ["table_extraction_failed"]
+            };
+
+        if (IsComplete(result))
+            return result;
+
+        var healed = TableRateHeuristic.Apply(result, parsedMarkdown, options.SupplementalText);
+        if (!IsComplete(healed) || healed == result)
+            return healed;
+
+        Console.Error.WriteLine(
+            $"Table extract: heuristic filled rates ({healed.RateClasses.Count(r => r.MaxTaxRate is not null)}/{healed.RateClasses.Count} classes).");
+        return healed;
     }
 
     public static (int first, int last)? ResolveTablePages(
@@ -156,12 +208,20 @@ public static class TableExtractionService
                 return (first.Value, last.Value);
         }
 
-        if (extractFirst is not null && extractLast is not null)
-            return (extractFirst.Value, extractLast.Value);
-
         var detected = DetectTable1Page(ocrText);
         if (detected is not null)
-            return (Math.Max(1, detected.Value - 1), detected.Value + 1);
+        {
+            var lo = Math.Max(1, detected.Value - TableWindowPadding);
+            var hi = detected.Value + TableWindowPadding;
+            if (extractFirst is not null)
+                lo = Math.Max(lo, extractFirst.Value);
+            if (extractLast is not null)
+                hi = Math.Min(hi, extractLast.Value);
+            return (lo, hi);
+        }
+
+        if (extractFirst is not null && extractLast is not null)
+            return (extractFirst.Value, extractLast.Value);
 
         return null;
     }
@@ -201,11 +261,12 @@ public static class TableExtractionService
             ct);
 
         var parsed = ParseTableJson(json);
+        parsed = TableRateHeuristic.Apply(parsed, supplementalText: options.SupplementalText);
         parsed = parsed with { Method = $"vision-{providerLabel}" };
         return parsed;
     }
 
-    private static async Task<TableExtractionResult> ExtractWithLlamaParseAsync(
+    private static async Task<(TableExtractionResult Result, string Markdown)> ExtractWithLlamaParseAsync(
         TableExtractionOptions options,
         CancellationToken ct)
     {
@@ -215,16 +276,27 @@ public static class TableExtractionService
             options.LastPage,
             ct);
 
+        if (markdown.Length < 100)
+        {
+            throw new InvalidOperationException(
+                $"LlamaParse returned only {markdown.Length} chars for pages {options.FirstPage}-{options.LastPage}. " +
+                "Try widening --pages (e.g. 196-202).");
+        }
+
+        if (!string.IsNullOrWhiteSpace(options.SaveMarkdownPath))
+            await File.WriteAllTextAsync(options.SaveMarkdownPath!, markdown, ct);
+
         var providerLabel = VisionLlmClient.ProviderLabel(options.VisionProvider);
         var json = await VisionLlmClient.GenerateJsonAsync(
             options.VisionProvider,
             TableRatePrompt.SystemPrompt,
-            TableRatePrompt.TextUserPrompt(markdown),
+            TableRatePrompt.LlamaParseUserPrompt(markdown, options.SupplementalText),
             options.Model,
             ct);
 
         var parsed = ParseTableJson(json);
-        return parsed with { Method = $"llamaparse+{providerLabel}" };
+        parsed = TableRateHeuristic.Apply(parsed, markdown, options.SupplementalText);
+        return (parsed with { Method = $"llamaparse+{providerLabel}" }, markdown);
     }
 
     private static async Task<TableExtractionResult> ExtractWithTextractAsync(
@@ -248,6 +320,15 @@ public static class TableExtractionService
 
         var parsed = ParseTableJson(json);
         return parsed with { Method = $"textract+{providerLabel}" };
+    }
+
+    private static bool ShouldFallbackFromVision(TableExtractionOptions options, Exception ex) =>
+        options.UseLlamaParse || options.UseTextract;
+
+    private static string SummarizeError(Exception ex)
+    {
+        var message = ex.Message.Split('\n')[0];
+        return message.Length > 160 ? message[..160] + "..." : message;
     }
 
     private static TableExtractionResult ParseTableJson(string json)
@@ -324,7 +405,9 @@ public static class TableExtractionService
     }
 
     private static string MissingRateSummary(TableExtractionResult result) =>
-        $"{result.RateClasses.Count(r => r.MaxTaxRate is null)} classes missing max_tax_rate";
+        result.RateClasses.Count == 0
+            ? "0 rate classes extracted"
+            : $"{result.RateClasses.Count(r => r.MaxTaxRate is null)} classes missing max_tax_rate";
 
     private static string StripMarkdownFences(string content)
     {

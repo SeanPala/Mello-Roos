@@ -52,4 +52,30 @@ public static class TableRatePrompt
 
         {documentText}
         """;
+
+    public static string LlamaParseUserPrompt(string markdown, string? supplementalText = null)
+    {
+        var supplemental = string.IsNullOrWhiteSpace(supplementalText)
+            ? ""
+            : $"""
+
+               Supplemental OCR context from the same PDF pages:
+               {supplementalText}
+               """;
+
+        return $"""
+            The text below is LlamaParse markdown/items output from scanned Mello-Roos RMA pages.
+            Find the rate table (often labeled TABLE 1, Assigned Special Tax, or Land Use Class).
+            Extract every land-use / rate-class row with numeric assigned special tax amounts.
+
+            Look for markdown tables, pipe tables, or structured rows with class names and dollar amounts.
+            Every developed-property row must include max_tax_rate as a plain number (no $ or commas).
+            If a row has a class_id but the LLM missed the dollar amount, read it from the adjacent table cell.
+            If the heading says TABLE 1 with OCR errors, still extract rows with plausible class names and rates.
+            {supplemental}
+
+            --- LlamaParse output ---
+            {markdown}
+            """;
+    }
 }

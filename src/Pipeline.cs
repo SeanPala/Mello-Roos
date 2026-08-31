@@ -18,15 +18,15 @@ public sealed class PipelineOptions
     public int? LastPage { get; init; }
     public int Dpi { get; init; } = TextAcquisition.DefaultDpi;
     public string TesseractPsm { get; init; } = TextAcquisition.DefaultPsm;
-    public LlmProvider LlmProvider { get; init; } = LlmProvider.Gemini;
-    public string LlmModel { get; init; } = LlmExtractor.DefaultGeminiModel;
-    public LlmProvider VisionProvider { get; init; } = LlmProvider.Gemini;
-    public string VisionModel { get; init; } = LlmExtractor.DefaultGeminiVisionModel;
+    public LlmProvider LlmProvider { get; init; } = LlmExtractor.DefaultProvider;
+    public string LlmModel { get; init; } = LlmExtractor.DefaultOpenAiModel;
+    public LlmProvider VisionProvider { get; init; } = LlmExtractor.DefaultProvider;
+    public string VisionModel { get; init; } = LlmExtractor.DefaultOpenAiVisionModel;
     public int LandUseType { get; init; }
     public bool VisionTable { get; init; }
     public string? TablePages { get; init; }
     public int TableDpi { get; init; } = PdfPageImages.TableDpi;
-    public bool LlamaParseFallback { get; init; }
+    public bool LlamaParseFallback { get; init; } = true;
     public bool TextractFallback { get; init; }
     public bool AutoLocate { get; init; } = true;
 }
@@ -83,10 +83,19 @@ public static class Pipeline
                     await File.WriteAllTextAsync(options.SaveTextPath!, textResult.Text, ct);
 
                 var extractor = new LlmExtractor();
-                extraction = await extractor.ExtractAsync(
-                    textResult.Text, options.LlmProvider, options.LlmModel, ct);
+                try
+                {
+                    extraction = await extractor.ExtractAsync(
+                        textResult.Text, options.LlmProvider, options.LlmModel, ct);
+                }
+                catch (Exception ex)
+                {
+                    Console.Error.WriteLine(
+                        $"Text LLM: all providers failed ({LlmProviderFallback.SummarizeError(ex)}); continuing with table extraction...");
+                    extraction = LlmExtractor.CreateTextFailureShell(LlmProviderFallback.SummarizeError(ex));
+                }
 
-                if (options.VisionTable || (isLargeDoc && options.AutoLocate))
+                if (ShouldRunTableExtraction(options, isLargeDoc))
                     await RunVisionTableMergeAsync(options, extraction, textResult, null, ct);
             }
         }
@@ -128,6 +137,9 @@ public static class Pipeline
         };
     }
 
+    private static bool ShouldRunTableExtraction(PipelineOptions options, bool isLargeDoc) =>
+        options.VisionTable || isLargeDoc;
+
     private static async Task RunVisionTableMergeAsync(
         PipelineOptions options,
         ExtractionResult extraction,
@@ -149,6 +161,10 @@ public static class Pipeline
         }
 
         var (tableFirst, tableLast) = tablePages.Value;
+        Console.Error.WriteLine(
+            $"Table extraction: pages {tableFirst}-{tableLast} " +
+            $"(vision={VisionLlmClient.ProviderLabel(options.VisionProvider)}/{options.VisionModel}, " +
+            $"llamaparse fallback={(options.LlamaParseFallback ? "on" : "off")})...");
         var tableResult = await TableExtractionService.ExtractAsync(new TableExtractionOptions
         {
             PdfPath = options.PdfPath,

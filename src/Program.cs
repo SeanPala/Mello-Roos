@@ -54,15 +54,16 @@ var extractForceOcrOption = new Option<bool>("--force-ocr", "Skip pdftotext and 
 var extractPagesOption = new Option<string?>("--pages", "Page range for OCR, e.g. 1-18");
 var extractDpiOption = new Option<int>("--dpi", () => TextAcquisition.DefaultDpi, "OCR DPI");
 var extractPsmOption = new Option<string>("--psm", () => TextAcquisition.DefaultPsm, "Tesseract PSM mode");
-var providerOption = new Option<string>("--provider", () => "gemini", "LLM provider: gemini, openai, or claude");
-var modelOption = new Option<string?>("--model", "Model name (default: gemini-3.6-flash, gpt-4o-mini, or claude-sonnet-4-20250514)");
+var providerOption = new Option<string>("--provider", () => "openai", "LLM provider: gemini, openai, or claude");
+var modelOption = new Option<string?>("--model", "Model name (default: gpt-5, gemini-3.6-flash, or claude-sonnet-4-20250514)");
 var landUseTypeOption = new Option<int>("--land-use-type", () => 0, "Default land_use_type for all rows");
 var visionTableOption = new Option<bool>("--vision-table", () => false, "Force vision on Table 1 (auto-enabled for large PDFs via auto-locate)");
 var tablePagesOption = new Option<string?>("--table-pages", "PDF pages for Table 1 vision (default: same as --pages, or auto-detect TABLE 1)");
 var tableDpiOption = new Option<int>("--table-dpi", () => PdfPageImages.TableDpi, "DPI for table page images");
 var visionModelOption = new Option<string?>("--vision-model", "Vision model for Table 1 (default per --vision-provider)");
 var visionProviderOption = new Option<string?>("--vision-provider", "Vision provider: gemini, openai, or claude (default: same as --provider)");
-var llamaparseOption = new Option<bool>("--llamaparse", () => false, "Fall back to LlamaParse if vision table extraction is incomplete");
+var noLlamaParseOption = new Option<bool>("--no-llamaparse", () => false, "Disable LlamaParse fallback after vision for Table 1");
+var llamaparseOption = new Option<bool>("--llamaparse", () => false, "Deprecated: LlamaParse fallback is on by default; use --no-llamaparse to disable");
 var textractOption = new Option<bool>("--textract", () => false, "Fall back to AWS Textract if vision (and LlamaParse) are incomplete");
 var noAutoLocateOption = new Option<bool>("--no-auto-locate", () => false, "Disable TOC/chunk discovery on large PDFs (requires --pages)");
 
@@ -86,6 +87,7 @@ extractCommand.AddOption(tablePagesOption);
 extractCommand.AddOption(tableDpiOption);
 extractCommand.AddOption(visionProviderOption);
 extractCommand.AddOption(visionModelOption);
+extractCommand.AddOption(noLlamaParseOption);
 extractCommand.AddOption(llamaparseOption);
 extractCommand.AddOption(textractOption);
 extractCommand.AddOption(noAutoLocateOption);
@@ -105,7 +107,7 @@ extractCommand.SetHandler(async (InvocationContext ctx) =>
     var pages = parse.GetValueForOption(extractPagesOption);
     var dpi = parse.GetValueForOption(extractDpiOption);
     var psm = parse.GetValueForOption(extractPsmOption) ?? TextAcquisition.DefaultPsm;
-    var providerStr = parse.GetValueForOption(providerOption) ?? "gemini";
+    var providerStr = parse.GetValueForOption(providerOption) ?? "openai";
     var provider = LlmExtractor.ParseProvider(providerStr);
     var model = parse.GetValueForOption(modelOption) ?? LlmExtractor.DefaultModel(provider);
     var landUseType = parse.GetValueForOption(landUseTypeOption);
@@ -114,7 +116,7 @@ extractCommand.SetHandler(async (InvocationContext ctx) =>
     var tableDpi = parse.GetValueForOption(tableDpiOption);
     var visionProviderStr = parse.GetValueForOption(visionProviderOption);
     var (visionProvider, visionModel) = ResolveVision(provider, visionProviderStr, parse.GetValueForOption(visionModelOption));
-    var llamaparse = parse.GetValueForOption(llamaparseOption);
+    var noLlamaParse = parse.GetValueForOption(noLlamaParseOption);
     var textract = parse.GetValueForOption(textractOption);
     var noAutoLocate = parse.GetValueForOption(noAutoLocateOption);
 
@@ -144,7 +146,7 @@ extractCommand.SetHandler(async (InvocationContext ctx) =>
         VisionTable = visionTable,
         TablePages = tablePages,
         TableDpi = tableDpi,
-        LlamaParseFallback = llamaparse,
+        LlamaParseFallback = !noLlamaParse,
         TextractFallback = textract,
         AutoLocate = !noAutoLocate
     });
@@ -216,13 +218,15 @@ var tablePdfArg = new Argument<string>("pdf", "Path to RMA PDF");
 var tablePagesArg = new Option<string?>("--pages", "PDF page range containing Table 1; auto-discovered on large bond PDFs if omitted");
 var tableOutOption = new Option<string?>(["-o", "--output"], "Write rate_classes JSON to file");
 var tableMergeJsonOption = new Option<string?>("--merge-json", "Merge results into existing extraction.json");
-var tableProviderOption = new Option<string?>("--vision-provider", "Vision provider: gemini, openai, or claude (default: gemini)");
+var tableProviderOption = new Option<string?>("--vision-provider", "Vision provider: gemini, openai, or claude (default: openai)");
 var tableModelOption = new Option<string?>("--vision-model", "Vision model for Table 1 (default per provider)");
 var tableVisionOption = new Option<bool>("--vision", () => true, "Use vision on Table 1 (default)");
 var tableNoVisionOption = new Option<bool>("--no-vision", () => false, "Skip vision table extraction");
-var tableLlamaOption = new Option<bool>("--llamaparse", () => false, "Fall back to LlamaParse if vision is incomplete");
+var tableNoLlamaOption = new Option<bool>("--no-llamaparse", () => false, "Disable LlamaParse fallback after vision");
+var tableLlamaOption = new Option<bool>("--llamaparse", () => false, "Deprecated: LlamaParse fallback is on by default");
 var tableTextractOption = new Option<bool>("--textract", () => false, "Fall back to AWS Textract if vision/LlamaParse incomplete");
 var tableExtractDpiOption = new Option<int>("--table-dpi", () => PdfPageImages.TableDpi, "DPI for page images");
+var tableSaveMarkdownOption = new Option<string?>("--save-markdown", "Save LlamaParse markdown for debugging");
 
 tableExtractCommand.AddArgument(tablePdfArg);
 tableExtractCommand.AddOption(tablePagesArg);
@@ -232,9 +236,11 @@ tableExtractCommand.AddOption(tableProviderOption);
 tableExtractCommand.AddOption(tableModelOption);
 tableExtractCommand.AddOption(tableVisionOption);
 tableExtractCommand.AddOption(tableNoVisionOption);
+tableExtractCommand.AddOption(tableNoLlamaOption);
 tableExtractCommand.AddOption(tableLlamaOption);
 tableExtractCommand.AddOption(tableTextractOption);
 tableExtractCommand.AddOption(tableExtractDpiOption);
+tableExtractCommand.AddOption(tableSaveMarkdownOption);
 
 tableExtractCommand.SetHandler(async (InvocationContext ctx) =>
 {
@@ -244,11 +250,12 @@ tableExtractCommand.SetHandler(async (InvocationContext ctx) =>
     var output = parse.GetValueForOption(tableOutOption);
     var mergeJson = parse.GetValueForOption(tableMergeJsonOption);
     var visionProviderStr = parse.GetValueForOption(tableProviderOption);
-    var (visionProvider, model) = ResolveVision(LlmProvider.Gemini, visionProviderStr, parse.GetValueForOption(tableModelOption));
+    var (visionProvider, model) = ResolveVision(LlmExtractor.DefaultProvider, visionProviderStr, parse.GetValueForOption(tableModelOption));
     var useVision = parse.GetValueForOption(tableVisionOption) && !parse.GetValueForOption(tableNoVisionOption);
-    var llamaparse = parse.GetValueForOption(tableLlamaOption);
+    var noLlamaParse = parse.GetValueForOption(tableNoLlamaOption);
     var textract = parse.GetValueForOption(tableTextractOption);
     var tableDpi = parse.GetValueForOption(tableExtractDpiOption);
+    var saveMarkdown = parse.GetValueForOption(tableSaveMarkdownOption);
 
     int first;
     int last;
@@ -287,8 +294,21 @@ tableExtractCommand.SetHandler(async (InvocationContext ctx) =>
         }
     }
 
-    if (!useVision && !llamaparse && !textract)
-        throw new ArgumentException("Enable at least one of --vision, --llamaparse, or --textract.");
+    if (!useVision && !noLlamaParse && !LlamaParseClient.IsConfigured() && !textract)
+        throw new ArgumentException("Enable at least one of --vision, LlamaParse (LLAMA_CLOUD_API_KEY), or --textract.");
+
+    string? supplementalText = null;
+    if (!useVision)
+    {
+        Console.Error.WriteLine($"OCR pages {first}-{last} for supplemental context...");
+        supplementalText = TextAcquisition.Acquire(pdf, new TextAcquisitionOptions
+        {
+            ForceOcr = true,
+            FirstPage = first,
+            LastPage = last,
+            Dpi = TextAcquisition.DefaultDpi
+        }).Text;
+    }
 
     var result = await TableExtractionService.ExtractAsync(new TableExtractionOptions
     {
@@ -299,8 +319,10 @@ tableExtractCommand.SetHandler(async (InvocationContext ctx) =>
         VisionProvider = visionProvider,
         Model = model,
         UseVision = useVision,
-        UseLlamaParse = llamaparse,
-        UseTextract = textract
+        UseLlamaParse = !noLlamaParse,
+        UseTextract = textract,
+        SupplementalText = supplementalText,
+        SaveMarkdownPath = saveMarkdown
     });
 
     Console.Error.WriteLine($"Method: {result.Method}, confidence: {result.ExtractionConfidence}, classes: {result.RateClasses.Count}");
@@ -347,11 +369,12 @@ var analyzeForceOcrOption = new Option<bool>("--force-ocr", "Skip pdftotext and 
 var analyzePagesOption = new Option<string?>("--pages", "Explicit page range (skips auto-discovery)");
 var analyzeDpiOption = new Option<int>("--dpi", () => TextAcquisition.DefaultDpi, "OCR DPI");
 var analyzePsmOption = new Option<string>("--psm", () => TextAcquisition.DefaultPsm, "Tesseract PSM mode");
-var analyzeProviderOption = new Option<string>("--provider", () => "gemini", "LLM provider for text extraction");
-var analyzeModelOption = new Option<string?>("--model", "Text LLM model (default: gemini-3.6-flash)");
+var analyzeProviderOption = new Option<string>("--provider", () => "openai", "LLM provider for text extraction");
+var analyzeModelOption = new Option<string?>("--model", "Text LLM model (default: gpt-5)");
 var analyzeVisionProviderOption = new Option<string?>("--vision-provider", "Vision provider: gemini, openai, or claude (default: same as --provider)");
 var analyzeVisionModelOption = new Option<string?>("--vision-model", "Vision model for Table 1 (default per provider)");
-var analyzeLlamaOption = new Option<bool>("--llamaparse", () => false, "Fall back to LlamaParse for Table 1");
+var analyzeNoLlamaOption = new Option<bool>("--no-llamaparse", () => false, "Disable LlamaParse fallback for Table 1");
+var analyzeLlamaOption = new Option<bool>("--llamaparse", () => false, "Deprecated: LlamaParse fallback is on by default");
 var analyzeTextractOption = new Option<bool>("--textract", () => false, "Fall back to AWS Textract for Table 1");
 var analyzeLandUseTypeOption = new Option<int>("--land-use-type", () => 0, "Default land_use_type for all rows");
 
@@ -369,6 +392,7 @@ analyzeCommand.AddOption(analyzeProviderOption);
 analyzeCommand.AddOption(analyzeModelOption);
 analyzeCommand.AddOption(analyzeVisionProviderOption);
 analyzeCommand.AddOption(analyzeVisionModelOption);
+analyzeCommand.AddOption(analyzeNoLlamaOption);
 analyzeCommand.AddOption(analyzeLlamaOption);
 analyzeCommand.AddOption(analyzeTextractOption);
 analyzeCommand.AddOption(analyzeLandUseTypeOption);
@@ -386,12 +410,12 @@ analyzeCommand.SetHandler(async (InvocationContext ctx) =>
     var pages = parse.GetValueForOption(analyzePagesOption);
     var dpi = parse.GetValueForOption(analyzeDpiOption);
     var psm = parse.GetValueForOption(analyzePsmOption) ?? TextAcquisition.DefaultPsm;
-    var providerStr = parse.GetValueForOption(analyzeProviderOption) ?? "gemini";
+    var providerStr = parse.GetValueForOption(analyzeProviderOption) ?? "openai";
     var provider = LlmExtractor.ParseProvider(providerStr);
     var model = parse.GetValueForOption(analyzeModelOption) ?? LlmExtractor.DefaultModel(provider);
     var visionProviderStr = parse.GetValueForOption(analyzeVisionProviderOption);
     var (visionProvider, visionModel) = ResolveVision(provider, visionProviderStr, parse.GetValueForOption(analyzeVisionModelOption));
-    var llamaparse = parse.GetValueForOption(analyzeLlamaOption);
+    var noLlamaParse = parse.GetValueForOption(analyzeNoLlamaOption);
     var textract = parse.GetValueForOption(analyzeTextractOption);
     var landUseType = parse.GetValueForOption(analyzeLandUseTypeOption);
 
@@ -412,7 +436,7 @@ analyzeCommand.SetHandler(async (InvocationContext ctx) =>
         LlmModel = model,
         VisionProvider = visionProvider,
         VisionModel = visionModel,
-        LlamaParseFallback = llamaparse,
+        LlamaParseFallback = !noLlamaParse,
         TextractFallback = textract,
         SaveTextPath = saveText,
         SaveJsonPath = saveJson,
@@ -583,7 +607,126 @@ tocSmokeCommand.SetHandler(() =>
 
 root.AddCommand(tocSmokeCommand);
 
+var checkKeysCommand = new Command("check-keys", "Verify API keys and list OpenAI models your key can call");
+checkKeysCommand.SetHandler(async () =>
+{
+    Console.Error.WriteLine("ChatGPT Plus is the chat app subscription. The API is billed separately at platform.openai.com.");
+    Console.Error.WriteLine("A Plus account does not automatically grant API model access — check your API project and billing.");
+    Console.Error.WriteLine();
+
+    var openAiKey = OpenAiClient.ResolveApiKey();
+    if (string.IsNullOrWhiteSpace(openAiKey))
+    {
+        Console.Error.WriteLine("OPENAI_API_KEY: not set");
+    }
+    else
+    {
+        Console.Error.WriteLine($"OPENAI_API_KEY: set ({openAiKey.Length} chars, prefix {openAiKey[..Math.Min(7, openAiKey.Length)]}…)");
+        try
+        {
+            var models = await OpenAiClient.ListModelIdsAsync(openAiKey);
+            var chat = models.Where(m => m.StartsWith("gpt-", StringComparison.Ordinal) || m.StartsWith("o", StringComparison.Ordinal)).ToList();
+            var preferred = OpenAiClient.PreferredModels(models);
+            Console.Error.WriteLine($"OpenAI models: {models.Count} total, {chat.Count} chat-capable");
+            if (preferred.Count > 0)
+            {
+                Console.Error.WriteLine($"Preferred for this tool (in order): {string.Join(", ", preferred)}");
+                if (preferred.Count == 1)
+                    Console.Error.WriteLine($"Tip: export OPENAI_MODEL='{preferred[0]}' to skip fallback probes.");
+            }
+            else
+                Console.Error.WriteLine("None of gpt-5 / gpt-4o / gpt-4o-mini are on your allowlist — check project model access.");
+
+            Console.Error.Write("OpenAI quota probe: ");
+            if (await OpenAiClient.ProbeQuotaAsync(openAiKey))
+                Console.Error.WriteLine("OK (API credits available).");
+            else
+                Console.Error.WriteLine(
+                    "insufficient_quota — add API billing at platform.openai.com. " +
+                    "ChatGPT Plus does not include API credits; use --provider gemini meanwhile.");
+            if (chat.Count > 0 && chat.Count <= 30)
+                Console.Error.WriteLine($"Chat models: {string.Join(", ", chat)}");
+            else if (chat.Count > 30)
+                Console.Error.WriteLine($"Chat models (first 30): {string.Join(", ", chat.Take(30))}…");
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"OpenAI models list failed: {ex.Message}");
+        }
+    }
+
+    var geminiKey = GeminiClient.ResolveApiKey();
+    Console.Error.WriteLine(string.IsNullOrWhiteSpace(geminiKey)
+        ? "GEMINI_API_KEY: not set"
+        : $"GEMINI_API_KEY: set ({geminiKey.Length} chars)");
+
+    var llamaKey = LlamaParseClient.ResolveApiKey();
+    Console.Error.WriteLine(string.IsNullOrWhiteSpace(llamaKey)
+        ? "LLAMA_CLOUD_API_KEY: not set"
+        : $"LLAMA_CLOUD_API_KEY: set ({llamaKey.Length} chars)");
+});
+
+root.AddCommand(checkKeysCommand);
+
+var checkDepsCommand = new Command("check-deps", "Verify pdftotext, tesseract, and other required tools are on PATH");
+checkDepsCommand.SetHandler(() =>
+{
+    Console.Error.WriteLine($"Platform: {Environment.OSVersion}");
+    Console.Error.WriteLine();
+
+    var results = ExternalToolChecker.CheckAll();
+    foreach (var (name, ok, detail) in results)
+    {
+        Console.Error.WriteLine(ok
+            ? $"{name}: OK ({detail})"
+            : $"{name}: MISSING — {detail}");
+    }
+
+    Console.Error.WriteLine();
+    if (ExternalToolChecker.AllPresent())
+    {
+        Console.Error.WriteLine("All required tools found.");
+        if (OperatingSystem.IsWindows())
+            Console.Error.WriteLine("(Missing tools install automatically on first run.)");
+    }
+    else
+    {
+        Console.Error.WriteLine("Install missing tools, add their bin folder to PATH, then open a new terminal.");
+        if (OperatingSystem.IsWindows())
+            Console.Error.WriteLine("Or re-run any command — first-run setup will attempt winget install.");
+        else if (OperatingSystem.IsMacOS())
+            Console.Error.WriteLine("macOS: brew install poppler tesseract");
+    }
+});
+
+root.AddCommand(checkDepsCommand);
+
+if (OperatingSystem.IsWindows() && ShouldBootstrap(args))
+{
+    try
+    {
+        await WindowsDependencyInstaller.EnsureInstalledAsync();
+    }
+    catch (Exception ex)
+    {
+        Console.Error.WriteLine($"Setup failed: {ex.Message}");
+        return 1;
+    }
+}
+
 return await root.InvokeAsync(args);
+
+static bool ShouldBootstrap(string[] args)
+{
+    if (args.Length == 0)
+        return true;
+
+    return args[0] switch
+    {
+        "--help" or "-h" or "-?" or "--version" => false,
+        _ => true
+    };
+}
 
 static DateOnly ParseRunDate(string? runDateStr)
 {

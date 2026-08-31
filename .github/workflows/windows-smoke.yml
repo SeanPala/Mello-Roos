@@ -1,0 +1,49 @@
+name: Windows smoke
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  windows-smoke:
+    runs-on: windows-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Build
+        run: dotnet build MelloRoos.sln -c Release
+
+      - name: First-run PDF tool setup
+        run: dotnet run --project src/MelloRoos.csproj -c Release -- check-deps
+
+      - name: TocParser smoke (no PDF)
+        run: dotnet run --project src/MelloRoos.csproj -c Release -- toc-smoke
+
+      - name: pdftotext smoke (Fillmore CFD 8)
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path out | Out-Null
+          dotnet run --project src/MelloRoos.csproj -c Release -- text `
+            "Reference-Docs/City of Fillmore, CFD 8, RMA.pdf" `
+            -o out/fillmore-win.txt
+          $len = (Get-Item out/fillmore-win.txt).Length
+          Write-Host "Extracted $len chars"
+          if ($len -lt 1000) { throw "pdftotext output too short ($len chars)" }
+
+      - name: Escalate sample JSON (no LLM)
+        run: dotnet run --project src/MelloRoos.csproj -c Release -- escalate src/rates.json --debt-id 123 --run-date 2026-08-18 -o out/rates-win.sql
+
+      # Uncomment when OPENAI_API_KEY is configured as a repository secret:
+      # - name: Full extract smoke
+      #   env:
+      #     OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      #   run: dotnet run --project src/MelloRoos.csproj -c Release -- extract "Reference-Docs/City of Fillmore, CFD 8, RMA.pdf" --debt-id 123 --run-date 2026-08-18 --save-json out/extraction-win.json -o out/rates-extract-win.sql

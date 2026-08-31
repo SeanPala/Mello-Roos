@@ -36,8 +36,18 @@ public static class LargeDocumentPipeline
             await File.WriteAllTextAsync(options.SaveTextPath!, textResult.Text, ct);
 
         var extractor = new LlmExtractor();
-        var extraction = await extractor.ExtractAsync(
-            textResult.Text, options.LlmProvider, options.LlmModel, ct);
+        ExtractionResult extraction;
+        try
+        {
+            extraction = await extractor.ExtractAsync(
+                textResult.Text, options.LlmProvider, options.LlmModel, ct);
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine(
+                $"Text LLM: all providers failed ({LlmProviderFallback.SummarizeError(ex)}); continuing with table extraction...");
+            extraction = LlmExtractor.CreateTextFailureShell(LlmProviderFallback.SummarizeError(ex));
+        }
 
         Console.Error.WriteLine(
             $"Text LLM done: {extraction.RateClasses.Count} rate classes, confidence={extraction.ExtractionConfidence}.");

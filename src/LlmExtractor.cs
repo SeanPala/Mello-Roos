@@ -16,14 +16,16 @@ public enum LlmProvider
 public sealed class LlmExtractor
 {
     public const string DefaultGeminiModel = "gemini-3.6-flash";
-    /// <summary>Flash model with free-tier vision quota. Use gemini-3.1-pro-preview with billing for higher quality.</summary>
-    public const string DefaultGeminiVisionModel = "gemini-2.0-flash";
-    public const string DefaultOpenAiVisionModel = "gpt-4o-mini";
+    /// <summary>Matches text model; supports vision on current Gemini API keys.</summary>
+    public const string DefaultGeminiVisionModel = DefaultGeminiModel;
+    public const string DefaultOpenAiVisionModel = "gpt-5";
     public const string DefaultClaudeVisionModel = "claude-sonnet-4-20250514";
 
-    public const string DefaultVisionModel = DefaultGeminiVisionModel;
-    public const string DefaultOpenAiModel = "gpt-4o-mini";
+    public const string DefaultOpenAiModel = "gpt-5";
     public const string DefaultClaudeModel = "claude-sonnet-4-20250514";
+
+    public const LlmProvider DefaultProvider = LlmProvider.OpenAi;
+    public const string DefaultVisionModel = DefaultOpenAiVisionModel;
 
     private const int MaxPromptChars = 120_000;
 
@@ -131,27 +133,69 @@ public sealed class LlmExtractor
 
     public async Task<ExtractionResult> ExtractAsync(
         string documentText,
-        LlmProvider provider = LlmProvider.Gemini,
+        LlmProvider provider = LlmProvider.OpenAi,
         string? model = null,
         CancellationToken ct = default)
     {
-        model ??= DefaultModel(provider);
         var promptText = PrepareText(documentText);
         var userPrompt = $"Extract rate table data from this RMA document text:\n\n{promptText}";
 
-        Console.Error.WriteLine(
-            $"Text LLM: {provider}/{model} ({promptText.Length:N0} chars)...");
-
-        var json = provider switch
+        Exception? lastError = null;
+        foreach (var (attemptProvider, attemptModel) in LlmProviderFallback.Attempts(
+                     provider, model, DefaultModel))
         {
-            LlmProvider.Gemini => await ExtractWithGeminiAsync(userPrompt, model, ct),
-            LlmProvider.OpenAi => await ExtractWithOpenAiAsync(userPrompt, model, ct),
-            LlmProvider.Claude => await ExtractWithClaudeAsync(userPrompt, model, ct),
+            Console.Error.WriteLine(
+                $"Text LLM: {attemptProvider}/{attemptModel} ({promptText.Length:N0} chars)...");
+
+            try
+            {
+                var json = await ExtractJsonAsync(attemptProvider, userPrompt, attemptModel, ct);
+                Console.Error.WriteLine(
+                    $"Text LLM: {attemptProvider}/{attemptModel} response received ({json.Length:N0} chars).");
+                return Deserialize(json);
+            }
+            catch (Exception ex)
+            {
+                lastError = ex;
+                if (HasMoreAttempts(provider, model, attemptProvider))
+                {
+                    Console.Error.WriteLine(
+                        $"Text LLM: {attemptProvider} failed ({LlmProviderFallback.SummarizeError(ex)}); trying fallback...");
+                }
+            }
+        }
+
+        throw lastError ?? new InvalidOperationException("Text LLM failed with no configured providers.");
+    }
+
+    /// <summary>Minimal extraction shell so table/LlamaParse can still run after text LLM failure.</summary>
+    public static ExtractionResult CreateTextFailureShell(string reason) => new()
+    {
+        Source = new Source { BaseFiscalYear = "unknown", Variant = "unknown" },
+        RateClasses = [],
+        OneTimeTaxes = [],
+        ExtractionConfidence = "low",
+        Flags = ["text_llm_failed", reason]
+    };
+
+    private static bool HasMoreAttempts(LlmProvider primary, string? model, LlmProvider current)
+    {
+        var attempts = LlmProviderFallback.Attempts(primary, model, DefaultModel).ToList();
+        return attempts.FindIndex(a => a.Provider == current) < attempts.Count - 1;
+    }
+
+    private static Task<string> ExtractJsonAsync(
+        LlmProvider provider,
+        string userPrompt,
+        string model,
+        CancellationToken ct) =>
+        provider switch
+        {
+            LlmProvider.Gemini => ExtractWithGeminiAsync(userPrompt, model, ct),
+            LlmProvider.OpenAi => ExtractWithOpenAiAsync(userPrompt, model, ct),
+            LlmProvider.Claude => ExtractWithClaudeAsync(userPrompt, model, ct),
             _ => throw new ArgumentOutOfRangeException(nameof(provider))
         };
-
-        return Deserialize(json);
-    }
 
     private static async Task<string> ExtractWithGeminiAsync(string userPrompt, string model, CancellationToken ct)
     {
@@ -160,7 +204,6 @@ public sealed class LlmExtractor
             throw new InvalidOperationException("GEMINI_API_KEY (or GOOGLE_API_KEY) is required for Gemini extraction.");
 
         var content = await GeminiClient.GenerateJsonAsync(SystemPrompt, userPrompt, model, apiKey, ct);
-        Console.Error.WriteLine($"Text LLM: {model} response received ({content.Length:N0} chars).");
         return StripMarkdownFences(content);
     }
 

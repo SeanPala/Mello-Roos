@@ -1,27 +1,68 @@
-# Mello-Roos rate extraction pipeline
+# Mello-Roos rate extraction
 
-Extract Mello-Roos **Rate and Method of Apportionment (RMA)** rate tables from PDFs → review JSON → deterministic escalation → `[dbo].[Rate]` SQL INSERTs.
+Extract rate tables from a standalone **Rate and Method of Apportionment (RMA)** PDF → review JSON → SQL INSERTs for `[dbo].[Rate]`.
+
+**Typical input:** a short RMA PDF (under ~50 pages) like Fillmore CFD 8 — not a multi-hundred-page bond indenture.
+
+Full details: [`src/INSTRUCTIONS.md`](src/INSTRUCTIONS.md)
 
 ---
 
-## Setup (once)
+## Quick start (4 steps)
+
+Works on **macOS and Windows**. Windows-specific install: [`docs/windows-setup.md`](docs/windows-setup.md).
+
+### 1. Install once
+
+**macOS:**
 
 ```bash
-brew install poppler tesseract          # macOS — pdftotext, pdftoppm, tesseract
+brew install poppler tesseract    # pdftotext + OCR
 dotnet build MelloRoos.sln
 mkdir -p out
-export GEMINI_API_KEY='your-key-here'   # https://aistudio.google.com/apikey
 ```
 
----
+**Windows (PowerShell):**
 
-## Two ways to run
+```powershell
+# Install .NET 10 SDK only — Poppler + Tesseract install automatically on first run
+dotnet build MelloRoos.sln
+mkdir out -Force
+dotnet run --project src/MelloRoos.csproj -- extract `
+  "Reference-Docs\City of Fillmore, CFD 8, RMA.pdf" `
+  --debt-id 123 --save-json out/extraction.json -o out/rates.sql
+```
 
-Use the same `extract` command for both. The tool picks the path based on PDF size.
+Details: [`docs/windows-setup.md`](docs/windows-setup.md)
 
-### 1. Short RMA (typical — under ~50 pages, text-native)
+Set an LLM API key (pick one):
 
-Standalone RMA PDFs like Fillmore or Casitas. No page hunting, no OCR needed if the PDF has selectable text.
+**macOS / bash:**
+
+```bash
+export OPENAI_API_KEY='sk-...'     # default
+# export GEMINI_API_KEY='...'      # use with --provider gemini
+# add to ~/.zshrc to persist
+```
+
+**Windows PowerShell (persist — recommended):**
+
+```powershell
+[System.Environment]::SetEnvironmentVariable("OPENAI_API_KEY", "sk-proj-...", "User")
+# [System.Environment]::SetEnvironmentVariable("GEMINI_API_KEY", "AIza...", "User")
+```
+
+Close and reopen PowerShell, then verify:
+
+```powershell
+dotnet run --project src/MelloRoos.csproj -- check-keys
+```
+
+Full options (OpenAI model override, Gemini, Claude, session-only): [`src/INSTRUCTIONS.md`](src/INSTRUCTIONS.md#api-keys-windows-powershell)
+
+### 2. Run extract
+
+**macOS / Linux (bash):**
 
 ```bash
 dotnet run --project src/MelloRoos.csproj -- extract \
@@ -32,134 +73,109 @@ dotnet run --project src/MelloRoos.csproj -- extract \
   -o out/rates.sql
 ```
 
-| What happens | |
-|---|---|
-| Text | `pdftotext` reads the whole PDF |
-| LLM | Extracts rate classes + escalation rules → JSON |
-| Escalation | Computed deterministically from JSON (not LLM) |
-| Output | `out/extraction.json` + `out/rates.sql` |
+**Windows (PowerShell):**
 
-**Sanity check:** Fillmore CFD 8 Zone 1 → base $26,540/acre escalates to **$37,905.66/acre** at 2026-08-18.
+```powershell
+dotnet run --project src/MelloRoos.csproj -- extract `
+  "Reference-Docs\City of Fillmore, CFD 8, RMA.pdf" `
+  --debt-id 123 `
+  --run-date 2026-08-18 `
+  --save-json out/extraction.json `
+  -o out/rates.sql
+```
 
-For a **scanned** short RMA, add `--force-ocr`:
+Or use the helper script: `.\scripts\extract.ps1 -Pdf "..." -DebtId 123`
+
+**What this does:** reads the PDF text → LLM extracts rates and escalation rules → computes escalated amounts → writes JSON + SQL.
+
+**No extra flags needed** if the PDF has selectable text (most standalone RMAs).
+
+### 3. Review the JSON
+
+Open `out/extraction.json` and check rate classes and amounts against the PDF.
+
+If the tool printed `Review required`, SQL was **not** written — fix the JSON first (step 4).
+
+**Sanity check (Fillmore CFD 8):** Zone 1 base $26,540/acre → **$37,905.66/acre** at run date 2026-08-18.
+
+### 4. Re-run for SQL (after edits, if needed)
+
+```bash
+dotnet run --project src/MelloRoos.csproj -- escalate out/extraction.json \
+  --debt-id 123 \
+  --run-date 2026-08-18 \
+  -o out/rates.sql
+```
+
+Or pass the reviewed JSON back through extract:
 
 ```bash
 dotnet run --project src/MelloRoos.csproj -- extract \
-  "Reference-Docs/your-scanned-rma.pdf" \
-  --debt-id 123 --force-ocr \
-  --save-json out/extraction.json -o out/rates.sql
+  --json out/extraction.json \
+  --debt-id 123 \
+  --run-date 2026-08-18 \
+  -o out/rates.sql
 ```
 
 ---
 
-### 2. Long bond package (50+ pages, RMA buried in appendix)
+## Scanned RMA (no selectable text)
 
-Bond indentures where the RMA is an appendix at the back (e.g. *CFD 1, Series 2002*, 258 pages). **Do not pass `--pages`** — auto-discovery finds the RMA section.
+Add `--force-ocr` — everything else stays the same:
 
 ```bash
 dotnet run --project src/MelloRoos.csproj -- extract \
-  "Reference-Docs/CFD 1, Series 2002 (1).pdf" \
+  "Reference-Docs/your-scanned-rma.pdf" \
   --debt-id 123 \
   --force-ocr \
   --save-json out/extraction.json \
   -o out/rates.sql
 ```
 
-| What happens | |
-|---|---|
-| TOC + offset | OCR pages 1–15, find RMA in TOC, map listed page → PDF page |
-| Validate | Reject TOC hit if probe pages don't look like an RMA |
-| Binary search | Body-text chunk scan; vision fallback if `GEMINI_API_KEY` set |
-| Text LLM | Escalation metadata + rate structure from discovered section |
-| Vision table | Gemini, OpenAI, or Claude vision reads Table 1 images at 400 DPI |
-| Output | `out/extraction.json` + `out/rates.sql` (review flags expected) |
+---
 
-Add **`--llamaparse`** or **`--textract`** if vision misses garbled Table 1 rates:
+## Required flags
 
-```bash
-export LLAMA_CLOUD_API_KEY='...'   # optional IDP fallback
-
-dotnet run --project src/MelloRoos.csproj -- extract \
-  "Reference-Docs/CFD 1, Series 2002 (1).pdf" \
-  --debt-id 123 --force-ocr --llamaparse \
-  --save-json out/extraction.json -o out/rates.sql
-```
-
-**Preview discovery only** (no extraction):
-
-```bash
-dotnet run --project src/MelloRoos.csproj -- locate \
-  "Reference-Docs/CFD 1, Series 2002 (1).pdf" --force-ocr --toc-loose
-```
-
-**Override** when you know the exact pages:
-
-```bash
-dotnet run --project src/MelloRoos.csproj -- extract \
-  "Reference-Docs/CFD 1, Series 2002 (1).pdf" \
-  --debt-id 123 --force-ocr --no-auto-locate --pages 198-210 \
-  --save-json out/extraction.json -o out/rates.sql
-```
+| Flag | Required? | Purpose |
+|------|-----------|---------|
+| `--debt-id` | **Yes** | Existing `[dbo].[Debt].debt_id` for the SQL INSERTs |
+| `--save-json` | Recommended | Save JSON so you can review before using SQL |
+| `-o out/rates.sql` | Recommended | SQL output file |
+| `--run-date` | Optional | Escalation date (default: today) |
 
 ---
 
-## Review workflow
+## Troubleshooting
 
-1. Run `extract` with `--save-json out/extraction.json`
-2. Check JSON rates against the PDF
-3. If SQL was blocked (flags or low confidence), edit JSON and re-run:
+| Problem | Fix |
+|---------|-----|
+| `OPENAI_API_KEY is required` | `[System.Environment]::SetEnvironmentVariable("OPENAI_API_KEY", "sk-...", "User")` then reopen PowerShell |
+| `insufficient_quota` / 429 | Add API billing at platform.openai.com, or `--provider gemini` |
+| `Review required` | Edit `out/extraction.json`, then run `escalate` |
+| Garbled / empty text | Add `--force-ocr` |
+| Wrong model for your key | `dotnet run --project src/MelloRoos.csproj -- check-keys` |
 
-```bash
-dotnet run --project src/MelloRoos.csproj -- escalate out/extraction.json \
-  --debt-id 123 --run-date 2026-08-18 -o out/rates.sql
-```
-
-Or pass `--force` on `extract` to emit SQL despite flags (not recommended for production).
+ChatGPT Plus is **not** API access — the API is billed separately at platform.openai.com.
 
 ---
 
 ## Other commands
 
-| Command | Use |
-|---------|-----|
-| `text` | PDF → text only (no LLM) |
-| `escalate` | Reviewed JSON → SQL (no LLM, no PDF) |
-| `table-extract` | Table 1 rates only via vision/IDP |
-| `analyze` | Same as `extract` for long docs, skips JSON review gate |
-| `locate` | Dry-run page discovery |
-| `toc-smoke` | TocParser regression (no PDF) |
+| Command | When to use |
+|---------|-------------|
+| `escalate` | JSON already reviewed → SQL only (no PDF, no LLM) |
+| `text` | Debug: PDF → text file, no LLM |
+| `check-keys` | Verify API keys and model access |
+| `check-deps` | Verify pdftotext / tesseract on PATH |
 
-Full option reference: [`src/INSTRUCTIONS.md`](src/INSTRUCTIONS.md)
+Advanced (large bond packages, vision, IDP): see [`src/INSTRUCTIONS.md`](src/INSTRUCTIONS.md) § Advanced.
 
----
-
-## Key flags
-
-| Flag | When |
-|------|------|
-| `--debt-id` | Required — existing `[dbo].[Debt].debt_id` |
-| `--run-date` | Escalation date (default: today) |
-| `--save-json` | Save intermediate JSON for review |
-| `-o` | SQL output file |
-| `--force-ocr` | Scanned PDFs |
-| `--force` | Emit SQL even when review flags exist |
-| `--llamaparse` / `--textract` | IDP fallback for garbled Table 1 |
-| `--no-auto-locate --pages N-M` | Skip discovery; use explicit page range |
+**Windows desktop:** [`docs/windows-setup.md`](docs/windows-setup.md)
 
 ---
-
-## Pipeline
-
-1. **Text acquisition** — `pdftotext`; OCR fallback via `pdftoppm` + `tesseract`
-2. **LLM extraction** — structured JSON (`source`, `rate_classes`, escalation rules)
-3. **Vision / IDP** — Table 1 rates on large scanned docs (auto)
-4. **Escalation** — deterministic from `source.escalation`
-5. **SQL** — INSERTs per `rma-to-rate-mapping.md`
 
 ## Specs
 
 - Runbook: [`src/INSTRUCTIONS.md`](src/INSTRUCTIONS.md)
-- Pipeline spec: `.scratch/tax-rate-extraction/assets/extraction-pipeline-spec.md`
-- SQL mapping: `.scratch/tax-rate-extraction/assets/rma-to-rate-mapping.md`
 - Sample JSON: `src/rates.json` (Fillmore CFD 8)
 - Test PDFs: `Reference-Docs/`

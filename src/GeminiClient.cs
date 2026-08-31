@@ -87,7 +87,7 @@ public static class GeminiClient
         var callKind = imageParts is { Count: > 0 } ? $"vision ({imageParts.Count} images)" : "text";
         Console.Error.WriteLine($"Gemini API: {callKind}, model={model}...");
 
-        const int maxAttempts = 3;
+        const int maxAttempts = 5;
         for (var attempt = 1; attempt <= maxAttempts; attempt++)
         {
             try
@@ -114,20 +114,20 @@ public static class GeminiClient
 
                     if (attempt < maxAttempts)
                     {
-                        var delay = ParseRetryDelay(body) ?? TimeSpan.FromSeconds(5 * attempt);
+                        var delay = ParseRetryDelay(body) ?? TimeSpan.FromSeconds(10 * attempt);
                         Console.Error.WriteLine(
-                            $"Gemini rate limit ({(int)response.StatusCode}, attempt {attempt}/{maxAttempts}); retrying in {delay.TotalSeconds:F0}s...");
+                            $"Gemini unavailable ({(int)response.StatusCode}, attempt {attempt}/{maxAttempts}); retrying in {delay.TotalSeconds:F0}s...");
                         await Task.Delay(delay, ct);
                         continue;
                     }
                 }
 
-                throw new InvalidOperationException($"Gemini API error ({(int)response.StatusCode}): {body}");
+                throw new InvalidOperationException($"Gemini API error ({(int)response.StatusCode}): {SummarizeApiError(body)}");
             }
             catch (HttpRequestException) when (attempt < maxAttempts)
             {
                 Console.Error.WriteLine($"Gemini network error (attempt {attempt}/{maxAttempts}), retrying...");
-                await Task.Delay(TimeSpan.FromSeconds(5 * attempt), ct);
+                await Task.Delay(TimeSpan.FromSeconds(10 * attempt), ct);
             }
         }
 

@@ -13,15 +13,15 @@ public sealed class AnalyzeOptions
     public int? LastPage { get; init; }
     public int Dpi { get; init; } = TextAcquisition.DefaultDpi;
     public string TesseractPsm { get; init; } = TextAcquisition.DefaultPsm;
-    public string VisionModel { get; init; } = LlmExtractor.DefaultGeminiVisionModel;
-    public LlmProvider VisionProvider { get; init; } = LlmProvider.Gemini;
-    public bool LlamaParseFallback { get; init; }
+    public string VisionModel { get; init; } = LlmExtractor.DefaultOpenAiVisionModel;
+    public LlmProvider VisionProvider { get; init; } = LlmExtractor.DefaultProvider;
+    public bool LlamaParseFallback { get; init; } = true;
     public bool TextractFallback { get; init; }
     public string? SaveTextPath { get; init; }
     public string? SaveJsonPath { get; init; }
     public string? SqlOutputPath { get; init; }
-    public LlmProvider LlmProvider { get; init; } = LlmProvider.Gemini;
-    public string LlmModel { get; init; } = LlmExtractor.DefaultGeminiModel;
+    public LlmProvider LlmProvider { get; init; } = LlmExtractor.DefaultProvider;
+    public string LlmModel { get; init; } = LlmExtractor.DefaultOpenAiModel;
 }
 
 public sealed class AnalyzeResult

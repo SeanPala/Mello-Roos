@@ -481,7 +481,7 @@ public static class TextAcquisition
     {
         var psi = new ProcessStartInfo
         {
-            FileName = command,
+            FileName = ExternalToolChecker.GetExecutablePath(command),
             RedirectStandardOutput = true,
             RedirectStandardError = true,
             UseShellExecute = false,

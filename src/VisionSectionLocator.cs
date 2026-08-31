@@ -9,7 +9,7 @@ namespace MelloRoos;
 public static class VisionSectionLocator
 {
     public const int LocateDpi = 150;
-    public const string DefaultModel = "gemini-2.0-flash";
+    public const string DefaultModel = LlmExtractor.DefaultOpenAiVisionModel;
 
     public static int BinarySearchAppendixStart(
         string pdfPath,
