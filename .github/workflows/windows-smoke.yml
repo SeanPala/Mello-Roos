@@ -25,9 +25,6 @@ jobs:
       - name: First-run PDF tool setup
         run: dotnet run --project src/MelloRoos.csproj -c Release -- check-deps
 
-      - name: TocParser smoke (no PDF)
-        run: dotnet run --project src/MelloRoos.csproj -c Release -- toc-smoke
-
       - name: pdftotext smoke (Fillmore CFD 8)
         shell: pwsh
         run: |

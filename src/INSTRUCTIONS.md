@@ -418,9 +418,8 @@ The CI job on `windows-latest`:
 
 1. Builds the solution
 2. Runs first-run PDF tool setup (`check-deps`)
-3. Runs `toc-smoke` (no PDF/API)
-4. Runs `pdftotext` on Fillmore CFD 8 (no API key)
-5. Runs `escalate` on `src/rates.json` (no API key)
+3. Runs `pdftotext` on Fillmore CFD 8 (no API key)
+4. Runs `escalate` on `src/rates.json` (no API key)
 
 Optional full extract (needs secret): add `OPENAI_API_KEY` as a repository secret and uncomment the extract step in `.github/workflows/windows-smoke.yml`.
 

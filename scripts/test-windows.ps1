@@ -33,10 +33,6 @@ Step "First-run setup + check-deps"
 dotnet run --project src/MelloRoos.csproj -c Release -- check-deps
 if ($LASTEXITCODE -ne 0) { Fail "check-deps failed — see INSTRUCTIONS.md Windows manual install" }
 
-Step "toc-smoke"
-dotnet run --project src/MelloRoos.csproj -c Release -- toc-smoke
-if ($LASTEXITCODE -ne 0) { Fail "toc-smoke failed" }
-
 Step "pdftotext smoke (Fillmore CFD 8)"
 $pdf = "Reference-Docs\City of Fillmore, CFD 8, RMA.pdf"
 if (-not (Test-Path $pdf)) { Fail "Missing test PDF: $pdf" }

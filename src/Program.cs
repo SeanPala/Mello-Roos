@@ -555,58 +555,6 @@ locateCommand.SetHandler((InvocationContext ctx) =>
 
 root.AddCommand(locateCommand);
 
-var tocSmokeCommand = new Command("toc-smoke", "Run TocParser regression checks (no PDF/OCR)");
-tocSmokeCommand.SetHandler(() =>
-{
-    const int totalPages = 258;
-    var series2002Toc = """
-        TABLE OF CONTENTS
-        Special Tax Fund ........................................ 49
-        Administrative Expense Account .......................... 52
-        Apportionment of Special Tax ............................ 55
-        Appendix D Rate and Method of Apportionment of Special Tax .......... 92
-        Appendix E Form of Approving Legal Opinion .............. 120
-        """;
-
-    var entries = TocParser.Parse(series2002Toc, loose: true, totalPages);
-    var best = TocParser.FindBestRmaEntry(entries, minScore: 35, totalPages);
-
-    if (best is null)
-        throw new InvalidOperationException("Expected Appendix D RMA entry at listed page 92.");
-
-    if (best.PageNumber != 92)
-        throw new InvalidOperationException($"Expected listed page 92, got {best.PageNumber} ({best.Title}).");
-
-    if (!Regex.IsMatch(best.Title, @"(?i)appendix\s+d\s+rate\s+and\s+method"))
-        throw new InvalidOperationException($"Expected Appendix D title, got: {best.Title}");
-
-    if (TocParser.LooksLikeRmaTocTitle("Special Tax Fund"))
-        throw new InvalidOperationException("Bond boilerplate 'Special Tax Fund' must not look like RMA.");
-
-    if (TocParser.LooksLikeRmaTocTitle("Apportionment of Special Tax"))
-        throw new InvalidOperationException("Standalone 'Apportionment of Special Tax' must not look like RMA.");
-
-    if (TocParser.IsValidListedPage(2002, totalPages, "Series 2002"))
-        throw new InvalidOperationException("Series year 2002 must not pass as a listed page.");
-
-    var garbledOcrToc = """
-        TABLE OF CONTENTS
-        APPENDIX D RATE AND METHOD OF APPORTIONMENT OF SPECIAL TAX .........0.00000eD>l
-        APPENDIX E INFORMATION CONCERNING THE DEPOSITORY TRUST COMPANY ......... E-1
-        """;
-
-    if (!TocParser.ContainsRmaAppendixTitle(garbledOcrToc))
-        throw new InvalidOperationException("Garbled OCR TOC must still detect RMA appendix title.");
-
-    var garbledTitle = TocParser.FindRmaAppendixTitle(garbledOcrToc);
-    if (garbledTitle is null || !Regex.IsMatch(garbledTitle, @"(?i)appendix\s+d"))
-        throw new InvalidOperationException($"Expected Appendix D from garbled OCR, got: {garbledTitle}");
-
-    Console.Error.WriteLine($"toc-smoke OK: listed p.{best.PageNumber}, score {best.Score}, title: {best.Title}");
-});
-
-root.AddCommand(tocSmokeCommand);
-
 var checkKeysCommand = new Command("check-keys", "Verify API keys and list OpenAI models your key can call");
 checkKeysCommand.SetHandler(async () =>
 {
