@@ -49,13 +49,13 @@ Step "OCR smoke (scanned PDF, pages 1-2)"
 $scanned = "Reference-Docs\CFD No. 2000-1, RMA (1).pdf"
 if (-not (Test-Path $scanned)) { Fail "Missing scanned test PDF: $scanned" }
 
-$ocrLog = dotnet run --project src/MelloRoos.csproj -c Release -- text $scanned `
-    --force-ocr --pages 1-2 -o out/test-ocr-forced.txt 2>&1
+$ocrLog = (dotnet run --project src/MelloRoos.csproj -c Release -- text $scanned `
+    --force-ocr --pages 1-2 -o out/test-ocr-forced.txt 2>&1 | Out-String)
 if ($LASTEXITCODE -ne 0) { Fail "OCR forced failed" }
 if ($ocrLog -notmatch "Method: ocr-forced") { Fail "Expected ocr-forced in: $ocrLog" }
 
-$fallbackLog = dotnet run --project src/MelloRoos.csproj -c Release -- text $scanned `
-    --pages 1-2 -o out/test-ocr-fallback.txt 2>&1
+$fallbackLog = (dotnet run --project src/MelloRoos.csproj -c Release -- text $scanned `
+    --pages 1-2 -o out/test-ocr-fallback.txt 2>&1 | Out-String)
 if ($LASTEXITCODE -ne 0) { Fail "OCR auto-fallback failed" }
 if ($fallbackLog -notmatch "Method: ocr-fallback") { Fail "Expected ocr-fallback in: $fallbackLog" }
 
