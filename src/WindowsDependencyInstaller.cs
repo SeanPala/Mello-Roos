@@ -23,7 +23,7 @@ public static class WindowsDependencyInstaller
             return;
 
         ExternalToolChecker.RefreshProcessPath();
-        ExternalToolChecker.RegisterDiscoveredToolPaths();
+        ExternalToolChecker.RegisterDiscoveredToolPaths(force: true);
 
         if (ExternalToolChecker.AllPresent())
             return;
@@ -50,13 +50,13 @@ public static class WindowsDependencyInstaller
         }
 
         ExternalToolChecker.RefreshProcessPath();
-        ExternalToolChecker.RegisterDiscoveredToolPaths();
+        ExternalToolChecker.RegisterDiscoveredToolPaths(force: true);
 
         if (!IsToolPresent("pdftotext") || !IsToolPresent("pdftoppm") || !IsToolPresent("pdfinfo"))
             await InstallPopplerFromGitHubAsync(ct);
 
         ExternalToolChecker.RefreshProcessPath();
-        ExternalToolChecker.RegisterDiscoveredToolPaths();
+        ExternalToolChecker.RegisterDiscoveredToolPaths(force: true);
 
         if (ExternalToolChecker.AllPresent())
         {

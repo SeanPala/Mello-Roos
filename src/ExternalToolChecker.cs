@@ -34,9 +34,11 @@ public static class ExternalToolChecker
         Environment.SetEnvironmentVariable("PATH", combined, EnvironmentVariableTarget.Process);
     }
 
-    public static void RegisterDiscoveredToolPaths()
+    public static void ResetDiscovery() => _discovered = false;
+
+    public static void RegisterDiscoveredToolPaths(bool force = false)
     {
-        if (_discovered)
+        if (_discovered && !force)
             return;
 
         _discovered = true;
@@ -89,6 +91,13 @@ public static class ExternalToolChecker
             if (popplerBin is not null)
                 AddSearchPath(popplerBin);
         }
+
+        // WinGet shim directory (poppler aliases)
+        var wingetLinks = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "Microsoft", "WinGet", "Links");
+        if (Directory.Exists(wingetLinks))
+            AddSearchPath(wingetLinks);
 
         RefreshProcessPath();
     }
