@@ -36,6 +36,22 @@ jobs:
           Write-Host "Extracted $len chars"
           if ($len -lt 1000) { throw "pdftotext output too short ($len chars)" }
 
+      - name: OCR smoke (scanned PDF, pages 1-2)
+        shell: pwsh
+        run: |
+          $pdf = "Reference-Docs/CFD No. 2000-1, RMA (1).pdf"
+          dotnet run --project src/MelloRoos.csproj -c Release -- text $pdf `
+            --force-ocr --pages 1-2 -o out/ocr-forced.txt 2>&1 | Tee-Object -Variable log
+          if ($log -notmatch "Method: ocr-forced") { throw "Expected ocr-forced, got: $log" }
+          $forced = (Get-Item out/ocr-forced.txt).Length
+          if ($forced -lt 200) { throw "OCR forced output too short ($forced chars)" }
+          dotnet run --project src/MelloRoos.csproj -c Release -- text $pdf `
+            --pages 1-2 -o out/ocr-fallback.txt 2>&1 | Tee-Object -Variable log2
+          if ($log2 -notmatch "Method: ocr-fallback") { throw "Expected ocr-fallback, got: $log2" }
+          $fallback = (Get-Item out/ocr-fallback.txt).Length
+          if ($fallback -lt 200) { throw "OCR fallback output too short ($fallback chars)" }
+          Write-Host "OCR OK: forced=$forced chars, auto-fallback=$fallback chars"
+
       - name: Escalate sample JSON (no LLM)
         run: dotnet run --project src/MelloRoos.csproj -c Release -- escalate src/rates.json --debt-id 123 --run-date 2026-08-18 -o out/rates-win.sql
 

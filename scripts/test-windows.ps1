@@ -45,6 +45,22 @@ $chars = (Get-Item out/test-windows.txt).Length
 Write-Host "Extracted $chars chars"
 if ($chars -lt 1000) { Fail "pdftotext output too short ($chars chars)" }
 
+Step "OCR smoke (scanned PDF, pages 1-2)"
+$scanned = "Reference-Docs\CFD No. 2000-1, RMA (1).pdf"
+if (-not (Test-Path $scanned)) { Fail "Missing scanned test PDF: $scanned" }
+
+$ocrLog = dotnet run --project src/MelloRoos.csproj -c Release -- text $scanned `
+    --force-ocr --pages 1-2 -o out/test-ocr-forced.txt 2>&1
+if ($LASTEXITCODE -ne 0) { Fail "OCR forced failed" }
+if ($ocrLog -notmatch "Method: ocr-forced") { Fail "Expected ocr-forced in: $ocrLog" }
+
+$fallbackLog = dotnet run --project src/MelloRoos.csproj -c Release -- text $scanned `
+    --pages 1-2 -o out/test-ocr-fallback.txt 2>&1
+if ($LASTEXITCODE -ne 0) { Fail "OCR auto-fallback failed" }
+if ($fallbackLog -notmatch "Method: ocr-fallback") { Fail "Expected ocr-fallback in: $fallbackLog" }
+
+Write-Host "OCR OK (forced + auto-fallback)"
+
 Step "escalate sample JSON (no LLM)"
 dotnet run --project src/MelloRoos.csproj -c Release -- escalate src/rates.json `
     --debt-id 123 --run-date 2026-08-18 -o out/test-windows.sql

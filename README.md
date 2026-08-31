@@ -4,7 +4,9 @@ Extract rate tables from a standalone **Rate and Method of Apportionment (RMA)**
 
 **Typical input:** a short RMA PDF (under ~50 pages) like Fillmore CFD 8 — not a multi-hundred-page bond indenture.
 
-Full details: [`src/INSTRUCTIONS.md`](src/INSTRUCTIONS.md)
+Full client guide: [`src/INSTRUCTIONS.md`](src/INSTRUCTIONS.md)
+
+**Hand off to client:** run `./scripts/package-for-client.sh` → zip (~10 MB) → email or file share.
 
 ---
 
