@@ -8,29 +8,20 @@ Extract rate tables from a standalone **Rate and Method of Apportionment (RMA)**
 
 ---
 
-## Quick start checklist
+## Receiving the project
 
-1. Install [.NET 10 SDK](https://dotnet.microsoft.com/download)
-2. Unzip the project folder (see [Receiving the project](#receiving-the-project))
-3. Set your API key in PowerShell ([below](#api-keys-windows-powershell))
-4. Open **new** PowerShell in the project folder
-5. Run `check-deps` (installs PDF tools on first run)
-6. Run `extract` on your RMA PDF
-7. Review JSON → run `escalate` for SQL
+Place the project in a folder on your PC (for example `C:\Projects\Mello-Roos`). Run all commands below from that folder — the one that contains `MelloRoos.sln`.
 
 ---
 
-## Receiving the project
+## Quick start checklist
 
-You may get a **zip file** (email, SharePoint, OneDrive, etc.) — not GitHub.
-
-1. Unzip to a permanent folder, e.g. `C:\Projects\Mello-Roos`
-2. Open PowerShell in that folder (Shift + right-click → “Open PowerShell window here”, or `cd C:\Projects\Mello-Roos`)
-3. All commands below run from this folder (the one containing `MelloRoos.sln`)
-
-**Zip size:** the full reference PDF set can exceed email limits (~25 MB). The client zip usually excludes the largest bond-package sample. Your own RMA PDFs go anywhere on disk — pass the full path to `extract`.
-
-**Do not** unzip over an old copy while a terminal is open in that folder — close PowerShell first.
+1. Install [.NET 10 SDK](https://dotnet.microsoft.com/download)
+2. Set your API key in PowerShell ([below](#api-keys-windows-powershell))
+3. Open **new** PowerShell in the project folder (the one containing `MelloRoos.sln`)
+4. Run `check-deps` (installs PDF tools on first run)
+5. Run `extract` on your RMA PDF
+6. Review JSON → run `escalate` for SQL
 
 ---
 
@@ -304,36 +295,17 @@ dotnet run --project src/MelloRoos.csproj -- <command> ...
 
 ## For the developer — packaging for client
 
-Client does **not** need GitHub. Create a zip:
-
-**macOS / Linux:**
+Create a zip (~10 MB, email-friendly):
 
 ```bash
 ./scripts/package-for-client.sh
-# creates MelloRoos-client.zip (~15 MB without the 29 MB Series 2002 PDF)
 ```
-
-**Windows:**
 
 ```powershell
 .\scripts\package-for-client.ps1
 ```
 
-**Share via:**
-
-| Method | When |
-|--------|------|
-| Email | If zip &lt; ~20 MB |
-| OneDrive / Google Drive / Dropbox | Recommended |
-| USB | Offline / strict IT |
-
-**Include in handoff:**
-
-- `MelloRoos-client.zip`
-- This file (`src/INSTRUCTIONS.md`)
-- Client creates their own API key at platform.openai.com (do **not** send your key)
-
-**Exclude from zip (automatic in script):** `bin/`, `obj/`, `out/`, `.git/`, `.github/`, `.scratch/`, `.env`
+**Include in handoff:** `MelloRoos-client.zip` and this file (`INSTRUCTIONS.md`). Client creates their own API key at platform.openai.com — do **not** send your key.
 
 ---
 
@@ -351,7 +323,7 @@ dotnet run --project src/MelloRoos.csproj -- extract \
 
 ## Advanced: large bond packages (unusual)
 
-Not needed for typical short RMAs. See bond-package options (`--force-ocr`, auto-locate on 50+ page PDFs) only if you encounter a full bond indenture with the RMA in an appendix.
+Not needed for typical short RMAs. Bond-package options (`--force-ocr`, auto-locate on 50+ page PDFs) apply only if you encounter a full bond indenture with the RMA in an appendix.
 
 ---
 

@@ -4,7 +4,7 @@ Extract rate tables from a standalone **Rate and Method of Apportionment (RMA)**
 
 **Typical input:** a short RMA PDF (under ~50 pages) like Fillmore CFD 8 — not a multi-hundred-page bond indenture.
 
-Full client guide: [`src/INSTRUCTIONS.md`](src/INSTRUCTIONS.md)
+Full client guide: [`INSTRUCTIONS.md`](INSTRUCTIONS.md)
 
 **Hand off to client:** run `./scripts/package-for-client.sh` → zip (~10 MB) → email or file share.
 
@@ -60,7 +60,7 @@ Close and reopen PowerShell, then verify:
 dotnet run --project src/MelloRoos.csproj -- check-keys
 ```
 
-Full options (OpenAI model override, Gemini, Claude, session-only): [`src/INSTRUCTIONS.md`](src/INSTRUCTIONS.md#api-keys-windows-powershell)
+Full options (OpenAI model override, Gemini, Claude, session-only): [`INSTRUCTIONS.md`](INSTRUCTIONS.md#api-keys-windows-powershell)
 
 ### 2. Run extract
 
@@ -170,7 +170,7 @@ ChatGPT Plus is **not** API access — the API is billed separately at platform.
 | `check-keys` | Verify API keys and model access |
 | `check-deps` | Verify pdftotext / tesseract on PATH |
 
-Advanced (large bond packages, vision, IDP): see [`src/INSTRUCTIONS.md`](src/INSTRUCTIONS.md) § Advanced.
+Advanced (large bond packages, vision, IDP): see [`INSTRUCTIONS.md`](INSTRUCTIONS.md) § Advanced.
 
 **Windows desktop:** [`docs/windows-setup.md`](docs/windows-setup.md)
 
@@ -178,6 +178,6 @@ Advanced (large bond packages, vision, IDP): see [`src/INSTRUCTIONS.md`](src/INS
 
 ## Specs
 
-- Runbook: [`src/INSTRUCTIONS.md`](src/INSTRUCTIONS.md)
+- Runbook: [`INSTRUCTIONS.md`](INSTRUCTIONS.md)
 - Sample JSON: `src/rates.json` (Fillmore CFD 8)
 - Test PDFs: `Reference-Docs/`

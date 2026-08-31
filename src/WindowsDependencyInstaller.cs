@@ -69,7 +69,7 @@ public static class WindowsDependencyInstaller
         var missing = ExternalToolChecker.CheckAll().Where(r => !r.Ok).Select(r => r.Name);
         throw new InvalidOperationException(
             "Could not install required PDF tools: " + string.Join(", ", missing) + ". " +
-            "Install manually — see INSTRUCTIONS.md § Windows manual install — or docs/windows-setup.md.");
+            "Install manually — see INSTRUCTIONS.md (Manual install) — or docs/windows-setup.md.");
     }
 
     private static bool IsToolPresent(string name) =>

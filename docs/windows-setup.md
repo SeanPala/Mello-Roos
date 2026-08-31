@@ -20,9 +20,9 @@ That is the only manual prerequisite. PDF tools install on the first command you
 
 ---
 
-## 2. Get the project
+## 2. Open the project folder
 
-Clone or copy the repo, e.g. `C:\Projects\Mello-Roos`:
+Open PowerShell in the folder containing `MelloRoos.sln` (for example `C:\Projects\Mello-Roos`):
 
 ```powershell
 cd C:\Projects\Mello-Roos
@@ -162,4 +162,4 @@ dotnet publish src/MelloRoos.csproj -c Release -r win-x64 -o publish/win-x64
 
 ---
 
-See [`src/INSTRUCTIONS.md`](../src/INSTRUCTIONS.md) for the full workflow.
+See [`INSTRUCTIONS.md`](../INSTRUCTIONS.md) for the full workflow.

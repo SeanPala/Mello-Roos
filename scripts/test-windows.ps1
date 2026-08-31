@@ -31,7 +31,7 @@ if ($LASTEXITCODE -ne 0) { Fail "Build failed" }
 
 Step "First-run setup + check-deps"
 dotnet run --project src/MelloRoos.csproj -c Release -- check-deps
-if ($LASTEXITCODE -ne 0) { Fail "check-deps failed — see INSTRUCTIONS.md Windows manual install" }
+if ($LASTEXITCODE -ne 0) { Fail "check-deps failed — see INSTRUCTIONS.md (Manual install)" }
 
 Step "pdftotext smoke (Fillmore CFD 8)"
 $pdf = "Reference-Docs\City of Fillmore, CFD 8, RMA.pdf"
